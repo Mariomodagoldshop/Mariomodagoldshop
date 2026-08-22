@@ -7,12 +7,29 @@
    CONFIGURAZIONE
 ===================================================== */
 
+
 const GITHUB_USERNAME = "Mariomodagoldshop";
 
-const GITHUB_REPOSITORY = "Mariomodagoldshop";
 
-const WHATSAPP_NUMBER = "393510901180";
+/*
+   NOME ESATTO DEL REPOSITORY
+*/
 
+const GITHUB_REPOSITORY =
+    "Mariomodagoldshop";
+
+
+/*
+   NUMERO WHATSAPP
+*/
+
+const WHATSAPP_NUMBER =
+    "393510901180";
+
+
+/*
+   API GITHUB
+*/
 
 const GITHUB_API =
     `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPOSITORY}/contents/`;
@@ -27,36 +44,54 @@ const CATEGORIES = {
     scarpe: "SCARPE",
 
     borsa: "BORSE",
+
     borse: "BORSE",
 
     giubbino: "GIUBBINI",
+
     giubbini: "GIUBBINI",
 
     cintura: "CINTURE",
+
     cinture: "CINTURE",
 
     occhiale: "OCCHIALI",
+
     occhiali: "OCCHIALI",
 
     cappello: "CAPPELLI",
+
     cappelli: "CAPPELLI",
 
     tshirt: "T-SHIRT",
+
     tshirts: "T-SHIRT",
 
     orologio: "OROLOGI",
+
     orologi: "OROLOGI"
+
 };
 
 
+/* =====================================================
+   ESTENSIONI SUPPORTATE
+===================================================== */
+
 const ALLOWED_EXTENSIONS = [
+
     "jpg",
     "jpeg",
     "png",
     "webp",
     "gif"
+
 ];
 
+
+/* =====================================================
+   VARIABILI
+===================================================== */
 
 let products = [];
 
@@ -100,7 +135,9 @@ async function loadProducts() {
         files.forEach(file => {
 
             if (file.type !== "file") {
+
                 return;
+
             }
 
 
@@ -124,7 +161,9 @@ async function loadProducts() {
 
 
             if (!product) {
+
                 return;
+
             }
 
 
@@ -156,12 +195,14 @@ async function loadProducts() {
         });
 
 
-        loading.style.display = "none";
+        loading.style.display =
+            "none";
 
 
         renderProducts();
 
     }
+
 
     catch (error) {
 
@@ -198,7 +239,7 @@ async function loadProducts() {
 
 
 /* =====================================================
-   ESTENSIONE
+   ESTENSIONE FILE
 ===================================================== */
 
 function getExtension(fileName) {
@@ -215,14 +256,12 @@ function getExtension(fileName) {
    INTERPRETAZIONE NOME FILE
 =====================================================
 
-   NORMALE:
+   ESEMPI:
 
-   Borsa1330.jpg
+   Scarpe1170.jpg
 
-   = Borsa #1
-   = 330 €
-
-   SCONTATO:
+   = Scarpe #1
+   = 170 €
 
    Borsa1sconto330220.jpg
 
@@ -274,7 +313,9 @@ function parseProduct(fileName) {
 
 
     if (!categoryKey) {
+
         return null;
+
     }
 
 
@@ -377,7 +418,9 @@ function parseProduct(fileName) {
 
 
     if (!normalMatch) {
+
         return null;
+
     }
 
 
@@ -431,11 +474,13 @@ function calculateDiscount(
 ) {
 
     return Math.round(
+
         (
             1 -
             discountedPrice /
             originalPrice
         ) * 100
+
     );
 
 }
@@ -687,7 +732,9 @@ function addToCart(productId) {
 
 
     if (!product) {
+
         return;
+
     }
 
 
@@ -743,7 +790,7 @@ function addToCart(productId) {
 
 
 /* =====================================================
-   QUANTITÀ
+   CAMBIA QUANTITÀ
 ===================================================== */
 
 function changeQuantity(
@@ -759,7 +806,9 @@ function changeQuantity(
 
 
     if (!product) {
+
         return;
+
     }
 
 
@@ -773,7 +822,9 @@ function changeQuantity(
     if (!cartItem) {
 
         if (amount <= 0) {
+
             return;
+
         }
 
 
@@ -833,7 +884,7 @@ function changeQuantity(
 
 
 /* =====================================================
-   CARRELLO
+   RENDER CARRELLO
 ===================================================== */
 
 function renderCart() {
@@ -950,7 +1001,7 @@ function renderCart() {
 
 
 /* =====================================================
-   RIMUOVI
+   RIMUOVI DAL CARRELLO
 ===================================================== */
 
 function removeFromCart(productId) {
@@ -974,7 +1025,7 @@ function removeFromCart(productId) {
 
 
 /* =====================================================
-   CONTEGGIO
+   NUMERO PRODOTTI
 ===================================================== */
 
 function updateCartCount() {
@@ -1036,7 +1087,7 @@ function closeCart() {
 
 
 /* =====================================================
-   CHIUSURA ESTERNA
+   CHIUDI CLICCANDO FUORI
 ===================================================== */
 
 function closeCartOutside(event) {
@@ -1054,7 +1105,7 @@ function closeCartOutside(event) {
 
 
 /* =====================================================
-   CATEGORIE
+   FILTRO CATEGORIA
 ===================================================== */
 
 function filterCategory(
@@ -1089,7 +1140,7 @@ function filterCategory(
 
 
 /* =====================================================
-   WHATSAPP
+   CHECKOUT WHATSAPP
 ===================================================== */
 
 function checkoutWhatsApp() {
@@ -1133,7 +1184,7 @@ function checkoutWhatsApp() {
 
 
 /* =====================================================
-   PREZZO
+   FORMATTA PREZZO
 ===================================================== */
 
 function formatPrice(price) {
@@ -1143,7 +1194,9 @@ function formatPrice(price) {
         {
             style: "currency",
             currency: "EUR",
+
             minimumFractionDigits: 2,
+
             maximumFractionDigits: 2
         }
     ).format(price);
@@ -1158,10 +1211,12 @@ function formatPrice(price) {
 function escapeAttribute(value) {
 
     return String(value)
+
         .replace(
             /\\/g,
             "\\\\"
         )
+
         .replace(
             /'/g,
             "\\'"
@@ -1171,7 +1226,7 @@ function escapeAttribute(value) {
 
 
 /* =====================================================
-   LOCAL STORAGE
+   SALVA CARRELLO
 ===================================================== */
 
 function saveCart() {
@@ -1184,6 +1239,10 @@ function saveCart() {
 }
 
 
+/* =====================================================
+   CARICA CARRELLO
+===================================================== */
+
 function loadCart() {
 
     const saved =
@@ -1193,7 +1252,9 @@ function loadCart() {
 
 
     if (!saved) {
+
         return;
+
     }
 
 
