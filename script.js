@@ -7,7 +7,7 @@
    CONFIGURAZIONE
 ===================================================== */
 
-const GITHUB_USERNAME = "TUO_USERNAME";
+const GITHUB_USERNAME = "Mariomodagoldshop";
 
 const GITHUB_REPOSITORY = "Mariomodagoldshop";
 
