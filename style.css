@@ -1,4 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap');
+/* =========================================================
+   FONT — SOLO PER IL LOGO
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800;900&display=swap');
 
 
 /* =========================================================
@@ -24,6 +28,7 @@ body {
     background: #ffffff;
     color: #111111;
 
+    /* FONT NORMALE DEL SITO */
     font-family: Arial, Helvetica, sans-serif;
 
     overflow-x: hidden;
@@ -35,12 +40,14 @@ body {
 ========================================================= */
 
 :root {
-    --gold: #d4af37;
-    --gold-dark: #9b7615;
-    --gold-light: #f3df8c;
+    --purple: #7b2cbf;
+    --purple-dark: #5a189a;
+    --purple-light: #9d4edd;
+    --purple-soft: #f3eaff;
 
-    --purple: #8e44ad;
-    --purple-dark: #542565;
+    --black: #111111;
+    --gray: #666666;
+    --light-gray: #f7f7f7;
 }
 
 
@@ -53,17 +60,9 @@ body {
 
     padding: 10px 15px;
 
-    background:
-        linear-gradient(
-            90deg,
-            #a27b15,
-            #d4af37,
-            #f3df8c,
-            #d4af37,
-            #a27b15
-        );
+    background: var(--purple);
 
-    color: #111111;
+    color: #ffffff;
 
     text-align: center;
 
@@ -94,32 +93,31 @@ body {
 
     background: #ffffff;
 
-    border-bottom: 2px solid var(--gold);
+    border-bottom: 2px solid var(--purple);
 }
 
 
 /* =========================================================
    LOGO SUPERIORE
+   POPPINS SOLO QUI
 ========================================================= */
 
 .logo-3d {
     display: inline-block;
 
-    font-family:
-        'Montserrat',
-        sans-serif;
+    font-family: 'Poppins', sans-serif;
 
     font-size: 25px;
 
     font-weight: 900;
 
-    letter-spacing: -1.5px;
+    letter-spacing: -1.8px;
 
     line-height: 1;
 
     white-space: nowrap;
 
-    transform: scaleX(0.82);
+    transform: scaleX(.82);
 
     transform-origin: left center;
 
@@ -138,7 +136,7 @@ body {
 
     text-shadow:
         2px 2px 0 #000000,
-        3px 3px 5px rgba(0,0,0,.35);
+        3px 3px 5px rgba(0,0,0,.30);
 }
 
 
@@ -153,12 +151,12 @@ body {
 
     text-shadow:
         2px 2px 0 var(--purple-dark),
-        3px 3px 5px rgba(0,0,0,.30);
+        3px 3px 5px rgba(0,0,0,.25);
 }
 
 
 /* =========================================================
-   BOTTONE CARRELLO
+   CARRELLO
 ========================================================= */
 
 .cart-button {
@@ -177,11 +175,11 @@ body {
 
     background: #ffffff;
 
-    color: #111111;
+    color: var(--purple);
 
-    border: 2px solid var(--gold);
+    border: 2px solid var(--purple);
 
-    border-radius: 5px;
+    border-radius: 6px;
 
     cursor: pointer;
 
@@ -189,9 +187,11 @@ body {
     font-weight: 900;
 }
 
+
 .cart-icon {
     font-size: 18px;
 }
+
 
 .cart-count {
     min-width: 22px;
@@ -204,11 +204,12 @@ body {
 
     border-radius: 50%;
 
-    background: var(--gold);
+    background: var(--purple);
 
     color: #ffffff;
 
     font-size: 11px;
+
     font-weight: 900;
 }
 
@@ -226,26 +227,25 @@ body {
 
     background: #ffffff;
 
-    border-bottom: 1px solid #dfc879;
+    border-bottom: 1px solid #dfc7f2;
 }
 
 
 /* =========================================================
    LOGO CENTRALE
+   POPPINS SOLO QUI
 ========================================================= */
 
 .hero-logo {
     width: 100%;
 
-    font-family:
-        'Montserrat',
-        sans-serif;
+    font-family: 'Poppins', sans-serif;
 
     font-size: clamp(34px, 5.5vw, 65px);
 
     font-weight: 900;
 
-    letter-spacing: -1.5px;
+    letter-spacing: -2px;
 
     line-height: 1;
 
@@ -253,7 +253,7 @@ body {
 
     text-align: center;
 
-    transform: scaleX(0.88);
+    transform: scaleX(.88);
 
     transform-origin: center center;
 }
@@ -269,7 +269,7 @@ body {
     text-shadow:
         3px 3px 0 #000000,
         5px 5px 0 #000000,
-        7px 7px 10px rgba(0,0,0,.35);
+        7px 7px 10px rgba(0,0,0,.30);
 }
 
 
@@ -283,7 +283,7 @@ body {
     text-shadow:
         3px 3px 0 var(--purple-dark),
         5px 5px 0 #421d50,
-        7px 7px 10px rgba(0,0,0,.35);
+        7px 7px 10px rgba(0,0,0,.25);
 }
 
 
@@ -317,7 +317,7 @@ body {
 
     background: #ffffff;
 
-    border-bottom: 1px solid #dfc879;
+    border-bottom: 1px solid #dfc7f2;
 
     overflow-x: auto;
     overflow-y: hidden;
@@ -326,6 +326,7 @@ body {
 
     scrollbar-width: none;
 }
+
 
 .categories::-webkit-scrollbar {
     display: none;
@@ -341,11 +342,11 @@ body {
 
     background: #ffffff;
 
-    color: #111111;
+    color: var(--purple);
 
-    border: 1px solid var(--gold);
+    border: 1px solid var(--purple);
 
-    border-radius: 5px;
+    border-radius: 6px;
 
     cursor: pointer;
 
@@ -356,7 +357,7 @@ body {
 
 
 .category-button.active {
-    background: var(--gold);
+    background: var(--purple);
 
     color: #ffffff;
 }
@@ -404,12 +405,12 @@ main {
 
     background: #ffffff;
 
-    border: 1px solid var(--gold);
+    border: 1px solid var(--purple);
 
-    border-radius: 5px;
+    border-radius: 6px;
 
     box-shadow:
-        0 4px 15px rgba(180,145,35,.12);
+        0 4px 18px rgba(123,44,191,.10);
 }
 
 
@@ -426,7 +427,7 @@ main {
 
     background: #fafafa;
 
-    border-bottom: 1px solid #dfc879;
+    border-bottom: 1px solid #dfc7f2;
 }
 
 
@@ -469,7 +470,7 @@ main {
 
 
 .product-price {
-    color: var(--gold-dark);
+    color: var(--purple);
 
     font-size: 23px;
 
@@ -493,11 +494,11 @@ main {
 
     padding: 3px 7px;
 
-    background: #111111;
+    background: var(--purple);
 
-    color: var(--gold-light);
+    color: #ffffff;
 
-    border: 1px solid var(--gold);
+    border-radius: 3px;
 
     font-size: 10px;
 
@@ -529,11 +530,11 @@ main {
 
     background: #ffffff;
 
-    color: #111111;
+    color: var(--purple);
 
-    border: 1px solid var(--gold);
+    border: 1px solid var(--purple);
 
-    border-radius: 4px;
+    border-radius: 5px;
 
     cursor: pointer;
 
@@ -565,19 +566,13 @@ main {
 
     padding: 10px 5px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #ae8518,
-            #d4af37,
-            #ae8518
-        );
+    background: var(--purple);
 
     color: #ffffff;
 
-    border: 1px solid var(--gold-dark);
+    border: 1px solid var(--purple-dark);
 
-    border-radius: 4px;
+    border-radius: 5px;
 
     cursor: pointer;
 
@@ -587,10 +582,15 @@ main {
 }
 
 
+.add-cart-button:hover {
+    background: var(--purple-dark);
+}
+
+
 .add-cart-button.added {
     background: #111111;
 
-    color: var(--gold-light);
+    color: #ffffff;
 }
 
 
@@ -606,7 +606,7 @@ main {
 
     text-align: center;
 
-    color: var(--gold-dark);
+    color: var(--purple);
 
     font-size: 14px;
 
@@ -615,7 +615,7 @@ main {
 
 
 /* =========================================================
-   CARRELLO
+   CARRELLO OVERLAY
 ========================================================= */
 
 .cart-overlay {
@@ -641,6 +641,10 @@ main {
 }
 
 
+/* =========================================================
+   CARRELLO
+========================================================= */
+
 .cart {
     width: 440px;
 
@@ -654,7 +658,7 @@ main {
 
     background: #ffffff;
 
-    border-left: 3px solid var(--gold);
+    border-left: 3px solid var(--purple);
 }
 
 
@@ -675,11 +679,13 @@ main {
 
     justify-content: space-between;
 
-    border-bottom: 2px solid var(--gold);
+    border-bottom: 2px solid var(--purple);
 }
 
 
 .cart-header h2 {
+    color: #111111;
+
     font-size: 20px;
 
     font-weight: 900;
@@ -691,7 +697,7 @@ main {
 
     background: transparent;
 
-    color: var(--gold-dark);
+    color: var(--purple);
 
     cursor: pointer;
 
@@ -723,7 +729,7 @@ main {
 
     padding: 14px 0;
 
-    border-bottom: 1px solid #e3d18b;
+    border-bottom: 1px solid #e4d5ef;
 }
 
 
@@ -735,7 +741,7 @@ main {
 
     object-fit: cover;
 
-    border: 1px solid var(--gold);
+    border: 1px solid var(--purple);
 }
 
 
@@ -749,7 +755,7 @@ main {
 .cart-item-price {
     margin-bottom: 6px;
 
-    color: var(--gold-dark);
+    color: var(--purple);
 
     font-size: 17px;
 
@@ -820,7 +826,7 @@ main {
 
     background: #ffffff;
 
-    border-top: 2px solid var(--gold);
+    border-top: 2px solid var(--purple);
 }
 
 
@@ -842,14 +848,14 @@ main {
 
 
 .cart-total strong {
-    color: var(--gold-dark);
+    color: var(--purple);
 
     font-size: 23px;
 }
 
 
 /* =========================================================
-   WHATSAPP
+   CHECKOUT WHATSAPP
 ========================================================= */
 
 .checkout-button {
@@ -890,9 +896,9 @@ main {
 
     text-align: center;
 
-    border-top: 1px solid var(--gold);
+    border-top: 1px solid #dfc7f2;
 
-    border-bottom: 1px solid var(--gold);
+    border-bottom: 1px solid #dfc7f2;
 
     font-size: 11px;
 
@@ -905,7 +911,7 @@ main {
 
 
 .final-info div:first-child {
-    color: var(--gold-dark);
+    color: var(--purple);
 }
 
 
@@ -927,7 +933,7 @@ main {
 .social-title {
     margin-bottom: 18px;
 
-    color: var(--gold-dark);
+    color: var(--purple);
 
     font-size: 12px;
 
@@ -967,7 +973,7 @@ main {
 
     color: #111111;
 
-    border: 1px solid var(--gold);
+    border: 1px solid var(--purple);
 
     border-radius: 5px;
 
@@ -979,13 +985,18 @@ main {
 }
 
 
+.social-button:hover {
+    background: var(--purple-soft);
+}
+
+
 .social-svg {
     width: 24px;
     height: 24px;
 
     flex-shrink: 0;
 
-    color: var(--gold-dark);
+    color: var(--purple);
 }
 
 
@@ -1002,7 +1013,7 @@ footer {
 
     text-align: center;
 
-    border-top: 2px solid var(--gold);
+    border-top: 2px solid var(--purple);
 }
 
 
@@ -1011,7 +1022,7 @@ footer strong {
 
     margin-bottom: 8px;
 
-    color: var(--gold-dark);
+    color: var(--purple);
 
     font-size: 18px;
 
@@ -1072,7 +1083,7 @@ footer p {
 
         white-space: nowrap;
 
-        transform: scaleX(0.78);
+        transform: scaleX(.78);
 
         transform-origin: left center;
 
@@ -1146,7 +1157,7 @@ footer p {
 
         letter-spacing: -1.5px;
 
-        transform: scaleX(0.82);
+        transform: scaleX(.82);
     }
 
 
@@ -1370,7 +1381,7 @@ footer p {
     .logo-3d {
         font-size: 12px;
 
-        transform: scaleX(0.72);
+        transform: scaleX(.72);
 
         margin-right: -40px;
     }
@@ -1379,7 +1390,7 @@ footer p {
     .hero-logo {
         font-size: 23px;
 
-        transform: scaleX(0.78);
+        transform: scaleX(.78);
     }
 
 
@@ -1428,7 +1439,7 @@ footer p {
     .logo-3d {
         font-size: 11px;
 
-        transform: scaleX(0.65);
+        transform: scaleX(.65);
 
         margin-right: -50px;
     }
@@ -1437,7 +1448,7 @@ footer p {
     .hero-logo {
         font-size: 20px;
 
-        transform: scaleX(0.70);
+        transform: scaleX(.70);
     }
 
 
