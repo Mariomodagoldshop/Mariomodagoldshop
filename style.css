@@ -91,7 +91,7 @@ body {
 
 
 /* =========================================================
-   LOGO
+   LOGO MARIOMODAGOLDSHOP
 ========================================================= */
 
 .logo-3d {
@@ -101,34 +101,223 @@ body {
         "Arial Black",
         sans-serif;
 
-    font-size: 30px;
+    font-size: 27px;
     font-weight: 900;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 0;
 
     white-space: nowrap;
 
     line-height: 1;
 
-    text-shadow:
-        1px 1px 0 #777777,
-        2px 2px 0 #555555,
-        3px 3px 0 #333333,
-        5px 5px 8px rgba(0,0,0,.35);
+    display: inline-block;
+
+    transform: scaleX(0.88);
+    transform-origin: left center;
 }
+
+
+/* MARIO - BIANCO CON BORDO NERO */
 
 .logo-mario {
     color: #ffffff;
-}
 
-.logo-moda {
-    color: var(--purple);
+    -webkit-text-stroke: 1.8px #000000;
 
     text-shadow:
-        1px 1px 0 #632d78,
+        2px 2px 0 #000000,
+        3px 3px 0 #000000,
+        4px 4px 5px rgba(0,0,0,0.35);
+}
+
+
+/* MODAGOLDSHOP - VIOLA */
+
+.logo-moda {
+    color: #8e44ad;
+
+    -webkit-text-stroke: 1px #000000;
+
+    text-shadow:
         2px 2px 0 #542565,
         3px 3px 0 #421d50,
-        5px 5px 8px rgba(0,0,0,.35);
+        4px 4px 6px rgba(0,0,0,0.35);
+}
+
+
+/* =========================================================
+   LOGO GRANDE CENTRALE
+========================================================= */
+
+.hero-logo {
+    width: 100%;
+
+    font-family:
+        Impact,
+        Haettenschweiler,
+        "Arial Black",
+        sans-serif;
+
+    font-size: clamp(38px, 6vw, 68px);
+
+    font-weight: 900;
+
+    letter-spacing: 0;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    transform: scaleX(0.88);
+    transform-origin: center center;
+}
+
+
+/* MARIO CENTRALE */
+
+.hero-logo .logo-mario {
+    color: #ffffff;
+
+    -webkit-text-stroke: 2.5px #000000;
+
+    text-shadow:
+        3px 3px 0 #000000,
+        5px 5px 0 #000000,
+        7px 7px 10px rgba(0,0,0,0.35);
+}
+
+
+/* MODAGOLDSHOP CENTRALE */
+
+.hero-logo .logo-moda {
+    color: #8e44ad;
+
+    -webkit-text-stroke: 1.5px #000000;
+
+    text-shadow:
+        3px 3px 0 #542565,
+        5px 5px 0 #421d50,
+        7px 7px 10px rgba(0,0,0,0.35);
+}
+
+
+/* =========================================================
+   SMARTPHONE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .logo-3d {
+        font-size: 15px;
+
+        letter-spacing: 0;
+
+        transform: scaleX(0.82);
+
+        transform-origin: left center;
+
+        margin-right: -15px;
+    }
+
+
+    .logo-mario {
+        -webkit-text-stroke: 1px #000000;
+
+        text-shadow:
+            1px 1px 0 #000000,
+            2px 2px 0 #000000,
+            3px 3px 4px rgba(0,0,0,0.35);
+    }
+
+
+    .logo-moda {
+        -webkit-text-stroke: .7px #000000;
+
+        text-shadow:
+            1px 1px 0 #542565,
+            2px 2px 0 #421d50,
+            3px 3px 4px rgba(0,0,0,0.35);
+    }
+
+
+    .hero-logo {
+        font-size: clamp(24px, 8vw, 42px);
+
+        letter-spacing: 0;
+
+        transform: scaleX(0.82);
+
+        transform-origin: center center;
+    }
+
+
+    .hero-logo .logo-mario {
+        -webkit-text-stroke: 1.5px #000000;
+
+        text-shadow:
+            2px 2px 0 #000000,
+            3px 3px 0 #000000,
+            4px 4px 7px rgba(0,0,0,0.35);
+    }
+
+
+    .hero-logo .logo-moda {
+        -webkit-text-stroke: 1px #000000;
+
+        text-shadow:
+            2px 2px 0 #542565,
+            3px 3px 0 #421d50,
+            4px 4px 7px rgba(0,0,0,0.35);
+    }
+
+}
+
+
+/* =========================================================
+   TELEFONI PICCOLI
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .logo-3d {
+        font-size: 13px;
+
+        transform: scaleX(0.78);
+
+        margin-right: -20px;
+    }
+
+
+    .hero-logo {
+        font-size: 22px;
+
+        transform: scaleX(0.78);
+    }
+
+}
+
+
+/* =========================================================
+   TELEFONI MOLTO STRETTI
+========================================================= */
+
+@media (max-width: 320px) {
+
+    .logo-3d {
+        font-size: 11px;
+
+        transform: scaleX(0.75);
+
+        margin-right: -25px;
+    }
+
+
+    .hero-logo {
+        font-size: 19px;
+
+        transform: scaleX(0.75);
+    }
+
 }
 
 
