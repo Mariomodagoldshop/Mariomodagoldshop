@@ -3,17 +3,7 @@
    JAVASCRIPT
 ========================================================= */
 
-
-/* =========================================================
-   IMPOSTAZIONI
-========================================================= */
-
 const WHATSAPP_NUMBER = "393510901180";
-
-
-/* =========================================================
-   CATEGORIE
-========================================================= */
 
 const categories = [
     "scarpe",
@@ -26,15 +16,8 @@ const categories = [
     "orologio"
 ];
 
-
-/* =========================================================
-   PRODOTTI
-========================================================= */
-
 let products = [];
-
 let cart = [];
-
 let currentCategory = "all";
 
 
@@ -42,33 +25,19 @@ let currentCategory = "all";
    ELEMENTI HTML
 ========================================================= */
 
-const productsContainer =
-    document.getElementById("products");
+const productsContainer = document.getElementById("products");
+const loading = document.getElementById("loading");
+const noProducts = document.getElementById("no-products");
 
-const loading =
-    document.getElementById("loading");
-
-const noProducts =
-    document.getElementById("no-products");
-
-const cartOverlay =
-    document.getElementById("cart-overlay");
-
-const cartItemsContainer =
-    document.getElementById("cart-items");
-
-const emptyCart =
-    document.getElementById("empty-cart");
-
-const cartTotal =
-    document.getElementById("cart-total");
-
-const cartCount =
-    document.getElementById("cart-count");
+const cartOverlay = document.getElementById("cart-overlay");
+const cartItemsContainer = document.getElementById("cart-items");
+const emptyCart = document.getElementById("empty-cart");
+const cartTotal = document.getElementById("cart-total");
+const cartCount = document.getElementById("cart-count");
 
 
 /* =========================================================
-   FORMATTAZIONE PREZZO
+   PREZZO
 ========================================================= */
 
 function formatPrice(price) {
@@ -85,9 +54,10 @@ function formatPrice(price) {
    PARSER NOME FILE
 =========================================================
 
-   Esempi:
+   ESEMPI VALIDI:
 
    Scarpe1170.jpg
+   Borsa2400.jpg
    Borsa1sconto330220.jpg
    Orologio2sconto500350.png
 
@@ -95,20 +65,20 @@ function formatPrice(price) {
 
 function parseProductFilename(filename) {
 
-    const name =
-        filename
-            .replace(/\.[^/.]+$/, "")
-            .toLowerCase();
+    const cleanName = filename
+        .replace(/\.[^/.]+$/, "")
+        .toLowerCase()
+        .trim();
 
 
     let category = null;
 
 
-    /* Trova categoria */
+    /* CERCA CATEGORIA */
 
     for (const cat of categories) {
 
-        if (name.startsWith(cat)) {
+        if (cleanName.startsWith(cat)) {
 
             category = cat;
 
@@ -119,6 +89,8 @@ function parseProductFilename(filename) {
     }
 
 
+    /* SE NON TROVA LA CATEGORIA NON CREA NULLA */
+
     if (!category) {
 
         return null;
@@ -127,45 +99,44 @@ function parseProductFilename(filename) {
 
 
     /* =====================================================
-       SCONTO
+       PRODOTTO CON SCONTO
     ====================================================== */
 
-    const discountMatch =
-        name.match(
-            /sconto(\d+(?:[.,]\d+)?)(\d+(?:[.,]\d+)?)/
-        );
+    const discountMatch = cleanName.match(
+        new RegExp(
+            "^" +
+            category +
+            "(\\d+)sconto(\\d+(?:[.,]\\d+)?)(\\d+(?:[.,]\\d+)?)$"
+        )
+    );
 
 
     if (discountMatch) {
 
-        const oldPrice =
-            parseFloat(
-                discountMatch[1]
-                    .replace(",", ".")
-            );
+        const number = discountMatch[1];
+
+        const oldPrice = parseFloat(
+            discountMatch[2].replace(",", ".")
+        );
+
+        const newPrice = parseFloat(
+            discountMatch[3].replace(",", ".")
+        );
 
 
-        const newPrice =
-            parseFloat(
-                discountMatch[2]
-                    .replace(",", ".")
-            );
+        /* PREZZI NON VALIDI */
 
+        if (
+            !Number.isFinite(oldPrice) ||
+            !Number.isFinite(newPrice) ||
+            oldPrice <= 0 ||
+            newPrice <= 0 ||
+            newPrice >= oldPrice
+        ) {
 
-        const numberMatch =
-            name.match(
-                new RegExp(
-                    "^" +
-                    category +
-                    "(\\d+)"
-                )
-            );
+            return null;
 
-
-        const number =
-            numberMatch
-                ? numberMatch[1]
-                : "1";
+        }
 
 
         return {
@@ -190,17 +161,16 @@ function parseProductFilename(filename) {
 
 
     /* =====================================================
-       PREZZO NORMALE
+       PRODOTTO NORMALE
     ====================================================== */
 
-    const normalMatch =
-        name.match(
-            new RegExp(
-                "^" +
-                category +
-                "(\\d+)(\\d+(?:[.,]\\d+)?)$"
-            )
-        );
+    const normalMatch = cleanName.match(
+        new RegExp(
+            "^" +
+            category +
+            "(\\d+)(\\d+(?:[.,]\\d+)?)$"
+        )
+    );
 
 
     if (!normalMatch) {
@@ -210,15 +180,23 @@ function parseProductFilename(filename) {
     }
 
 
-    const number =
-        normalMatch[1];
+    const number = normalMatch[1];
+
+    const price = parseFloat(
+        normalMatch[2].replace(",", ".")
+    );
 
 
-    const price =
-        parseFloat(
-            normalMatch[2]
-                .replace(",", ".")
-        );
+    /* PREZZO NON VALIDO */
+
+    if (
+        !Number.isFinite(price) ||
+        price <= 0
+    ) {
+
+        return null;
+
+    }
 
 
     return {
@@ -243,67 +221,34 @@ function parseProductFilename(filename) {
 
 
 /* =========================================================
-   ELENCO FILE
+   FILE DA CARICARE
 =========================================================
 
-   Inserisci qui i nomi delle immagini presenti
-   nel repository GitHub.
+   QUI INSERISCI SOLO LE FOTO CHE HAI REALMENTE
+   CARICATO SU GITHUB.
 
-   Esempi:
-
-   Scarpe1170.jpg
-   Borsa1sconto330220.jpg
+   NON INSERIRE FILE INESISTENTI.
 
 ========================================================= */
 
 const imageFiles = [
 
-    /* SCARPE */
+    /*
+       ESEMPIO:
 
-    "Scarpe1170.jpg",
-    "Scarpe2200.jpg",
+       "Scarpe1170.jpg",
+       "Borsa1sconto330220.jpg"
 
+       Quando non hai prodotti lascia semplicemente:
 
-    /* BORSE */
-
-    "Borsa1sconto330220.jpg",
-    "Borsa2400.jpg",
-
-
-    /* GIUBBINI */
-
-    "Giubbino1250.jpg",
-
-
-    /* CINTURE */
-
-    "Cintura1100.jpg",
-
-
-    /* OCCHIALI */
-
-    "Occhiale1150.jpg",
-
-
-    /* CAPPELLI */
-
-    "Cappello180.jpg",
-
-
-    /* T-SHIRT */
-
-    "Tshirt1120.jpg",
-
-
-    /* OROLOGI */
-
-    "Orologio1350.jpg"
+       []
+    */
 
 ];
 
 
 /* =========================================================
-   CREA PRODOTTI
+   CARICAMENTO PRODOTTI
 ========================================================= */
 
 function loadProducts() {
@@ -317,17 +262,34 @@ function loadProducts() {
             parseProductFilename(filename);
 
 
-        if (product) {
+        if (!product) {
 
-            products.push(product);
+            return;
 
         }
+
+
+        /*
+           CONTROLLO FINALE:
+           mai prodotti con prezzo 0
+        */
+
+        if (
+            !product.price ||
+            product.price <= 0
+        ) {
+
+            return;
+
+        }
+
+
+        products.push(product);
 
     });
 
 
     loading.style.display = "none";
-
 
     renderProducts();
 
@@ -335,7 +297,7 @@ function loadProducts() {
 
 
 /* =========================================================
-   CREA CARD PRODOTTO
+   CREA CARD
 ========================================================= */
 
 function createProductCard(product) {
@@ -343,17 +305,16 @@ function createProductCard(product) {
     const card =
         document.createElement("article");
 
-
     card.className = "product-card";
-
 
     card.dataset.category =
         product.category;
 
 
+    /* FOTO */
+
     const imageContainer =
         document.createElement("div");
-
 
     imageContainer.className =
         "product-image-container";
@@ -362,40 +323,35 @@ function createProductCard(product) {
     const image =
         document.createElement("img");
 
-
     image.className =
         "product-image";
-
 
     image.src =
         product.filename;
 
-
     image.alt =
         "Prodotto MARIOMODAGOLDSHOP";
 
-
-    image.loading = "lazy";
+    image.loading =
+        "lazy";
 
 
     imageContainer.appendChild(image);
 
 
+    /* INFO */
+
     const info =
         document.createElement("div");
-
 
     info.className =
         "product-info";
 
 
-    /* =====================================================
-       PREZZO
-    ====================================================== */
+    /* PREZZO */
 
     const priceArea =
         document.createElement("div");
-
 
     priceArea.className =
         "product-price-area";
@@ -406,10 +362,8 @@ function createProductCard(product) {
         const oldPrice =
             document.createElement("span");
 
-
         oldPrice.className =
             "product-old-price";
-
 
         oldPrice.textContent =
             formatPrice(product.oldPrice);
@@ -418,10 +372,8 @@ function createProductCard(product) {
         const newPrice =
             document.createElement("span");
 
-
         newPrice.className =
             "product-price";
-
 
         newPrice.textContent =
             formatPrice(product.price);
@@ -430,10 +382,8 @@ function createProductCard(product) {
         const badge =
             document.createElement("span");
 
-
         badge.className =
             "discount-badge";
-
 
         badge.textContent =
             "SCONTO";
@@ -450,27 +400,21 @@ function createProductCard(product) {
         const price =
             document.createElement("span");
 
-
         price.className =
             "product-price";
 
-
         price.textContent =
             formatPrice(product.price);
-
 
         priceArea.appendChild(price);
 
     }
 
 
-    /* =====================================================
-       QUANTITÀ
-    ====================================================== */
+    /* QUANTITÀ */
 
     const quantityRow =
         document.createElement("div");
-
 
     quantityRow.className =
         "quantity-row";
@@ -479,10 +423,8 @@ function createProductCard(product) {
     const minus =
         document.createElement("button");
 
-
     minus.className =
         "quantity-button";
-
 
     minus.textContent =
         "−";
@@ -491,10 +433,8 @@ function createProductCard(product) {
     const quantity =
         document.createElement("span");
 
-
     quantity.className =
         "quantity-value";
-
 
     quantity.textContent =
         "1";
@@ -503,10 +443,8 @@ function createProductCard(product) {
     const plus =
         document.createElement("button");
 
-
     plus.className =
         "quantity-button";
-
 
     plus.textContent =
         "+";
@@ -552,17 +490,13 @@ function createProductCard(product) {
     quantityRow.appendChild(plus);
 
 
-    /* =====================================================
-       BOTTONE CARRELLO
-    ====================================================== */
+    /* CARRELLO */
 
     const addButton =
         document.createElement("button");
 
-
     addButton.className =
         "add-cart-button";
-
 
     addButton.textContent =
         "AGGIUNGI AL CARRELLO";
@@ -580,7 +514,6 @@ function createProductCard(product) {
 
             addButton.textContent =
                 "AGGIUNTO ✓";
-
 
             addButton.classList.add(
                 "added"
@@ -640,7 +573,11 @@ function renderProducts() {
             );
 
 
-    if (filteredProducts.length === 0) {
+    /* NESSUN PRODOTTO */
+
+    if (
+        filteredProducts.length === 0
+    ) {
 
         noProducts.style.display =
             "block";
@@ -704,7 +641,7 @@ function filterCategory(
 
 
 /* =========================================================
-   AGGIUNGI AL CARRELLO
+   AGGIUNGI CARRELLO
 ========================================================= */
 
 function addToCart(
@@ -745,7 +682,7 @@ function addToCart(
 
 
 /* =========================================================
-   RIMUOVI PRODOTTO
+   RIMUOVI
 ========================================================= */
 
 function removeFromCart(id) {
@@ -765,7 +702,7 @@ function removeFromCart(id) {
 
 
 /* =========================================================
-   CAMBIA QUANTITÀ CARRELLO
+   QUANTITÀ CARRELLO
 ========================================================= */
 
 function changeCartQuantity(
@@ -848,7 +785,6 @@ function renderCart() {
         const cartItem =
             document.createElement("div");
 
-
         cartItem.className =
             "cart-item";
 
@@ -856,14 +792,11 @@ function renderCart() {
         const image =
             document.createElement("img");
 
-
         image.className =
             "cart-item-image";
 
-
         image.src =
             item.filename;
-
 
         image.alt =
             "Prodotto";
@@ -872,7 +805,6 @@ function renderCart() {
         const info =
             document.createElement("div");
 
-
         info.className =
             "cart-item-info";
 
@@ -880,10 +812,8 @@ function renderCart() {
         const price =
             document.createElement("div");
 
-
         price.className =
             "cart-item-price";
-
 
         price.textContent =
             formatPrice(item.price);
@@ -892,10 +822,8 @@ function renderCart() {
         const quantity =
             document.createElement("div");
 
-
         quantity.className =
             "cart-item-quantity";
-
 
         quantity.textContent =
             "Quantità: " +
@@ -905,14 +833,11 @@ function renderCart() {
         const minus =
             document.createElement("button");
 
-
         minus.className =
             "remove-item";
 
-
         minus.textContent =
             "− 1";
-
 
         minus.onclick =
             () =>
@@ -925,14 +850,11 @@ function renderCart() {
         const plus =
             document.createElement("button");
 
-
         plus.className =
             "remove-item";
 
-
         plus.textContent =
             "+ 1";
-
 
         plus.onclick =
             () =>
@@ -945,14 +867,11 @@ function renderCart() {
         const remove =
             document.createElement("button");
 
-
         remove.className =
             "remove-item";
 
-
         remove.textContent =
             "Rimuovi";
-
 
         remove.onclick =
             () =>
@@ -986,7 +905,6 @@ function renderCart() {
 
     cartTotal.textContent =
         formatPrice(total);
-
 
     cartCount.textContent =
         count;
@@ -1045,7 +963,7 @@ function closeCartOutside(event) {
 
 
 /* =========================================================
-   CHECKOUT WHATSAPP
+   WHATSAPP
 ========================================================= */
 
 function checkoutWhatsApp() {
@@ -1114,7 +1032,7 @@ function checkoutWhatsApp() {
 
 
 /* =========================================================
-   SALVATAGGIO CARRELLO
+   SALVA CARRELLO
 ========================================================= */
 
 function saveCart() {
@@ -1128,7 +1046,7 @@ function saveCart() {
 
 
 /* =========================================================
-   CARICAMENTO CARRELLO
+   CARICA CARRELLO
 ========================================================= */
 
 function loadCart() {
