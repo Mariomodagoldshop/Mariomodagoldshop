@@ -26,15 +26,12 @@
 
 
     <!-- =====================================================
-         BANNER SPEDIZIONE
+         BANNER
     ====================================================== -->
 
     <div class="shipping-banner">
-
         🚚 SPEDIZIONE GARANTITA ENTRO 48 ORE
-
     </div>
-
 
 
     <!-- =====================================================
@@ -43,13 +40,9 @@
 
     <header class="header">
 
-
         <div class="logo-3d">
-
-            MARIOMODAGOLDSHOP
-
+            <span class="logo-mario">MARIO</span><span class="logo-moda">MODAGOLDSHOP</span>
         </div>
-
 
 
         <button
@@ -58,34 +51,22 @@
             aria-label="Apri carrello"
         >
 
-            <span class="cart-icon">
-
-                🛒
-
-            </span>
-
+            <span class="cart-icon">🛒</span>
 
             <span class="cart-text">
-
                 CARRELLO
-
             </span>
-
 
             <span
                 id="cart-count"
                 class="cart-count"
             >
-
                 0
-
             </span>
 
         </button>
 
-
     </header>
-
 
 
     <!-- =====================================================
@@ -94,23 +75,15 @@
 
     <section class="hero">
 
-
         <div class="hero-logo">
-
-            MARIOMODAGOLDSHOP
-
+            <span class="logo-mario">MARIO</span><span class="logo-moda">MODAGOLDSHOP</span>
         </div>
 
-
         <p>
-
             MODA • STILE • ELEGANZA
-
         </p>
 
-
     </section>
-
 
 
     <!-- =====================================================
@@ -119,99 +92,70 @@
 
     <nav class="categories">
 
-
         <button
             class="category-button active"
             onclick="filterCategory('all', this)"
         >
-
             TUTTI
-
         </button>
-
 
         <button
             class="category-button"
             onclick="filterCategory('scarpe', this)"
         >
-
             SCARPE
-
         </button>
-
 
         <button
             class="category-button"
             onclick="filterCategory('borsa', this)"
         >
-
             BORSE
-
         </button>
-
 
         <button
             class="category-button"
             onclick="filterCategory('giubbino', this)"
         >
-
             GIUBBINI
-
         </button>
-
 
         <button
             class="category-button"
             onclick="filterCategory('cintura', this)"
         >
-
             CINTURE
-
         </button>
-
 
         <button
             class="category-button"
             onclick="filterCategory('occhiale', this)"
         >
-
             OCCHIALI
-
         </button>
-
 
         <button
             class="category-button"
             onclick="filterCategory('cappello', this)"
         >
-
             CAPPELLI
-
         </button>
-
 
         <button
             class="category-button"
             onclick="filterCategory('tshirt', this)"
         >
-
             T-SHIRT
-
         </button>
-
 
         <button
             class="category-button"
             onclick="filterCategory('orologio', this)"
         >
-
             OROLOGI
-
         </button>
 
-
     </nav>
-
 
 
     <!-- =====================================================
@@ -220,14 +164,11 @@
 
     <main>
 
-
         <div
             id="loading"
             class="loading"
         >
-
             CARICAMENTO PRODOTTI...
-
         </div>
 
 
@@ -241,14 +182,10 @@
             id="no-products"
             class="no-products"
         >
-
             NESSUN PRODOTTO DISPONIBILE.
-
         </div>
 
-
     </main>
-
 
 
     <!-- =====================================================
@@ -261,36 +198,26 @@
         onclick="closeCartOutside(event)"
     >
 
-
         <div
             class="cart"
             onclick="event.stopPropagation()"
         >
 
-
             <div class="cart-header">
 
-
                 <h2>
-
                     IL TUO CARRELLO
-
                 </h2>
-
 
                 <button
                     class="close-cart"
                     onclick="closeCart()"
                     aria-label="Chiudi carrello"
                 >
-
                     ×
-
                 </button>
 
-
             </div>
-
 
 
             <div
@@ -299,73 +226,49 @@
             ></div>
 
 
-
             <div
                 id="empty-cart"
                 class="empty-cart"
             >
 
-
                 <div class="empty-cart-icon">
-
                     🛒
-
                 </div>
 
-
                 <p>
-
                     IL CARRELLO È VUOTO
-
                 </p>
-
 
             </div>
 
 
-
             <div class="cart-footer">
-
 
                 <div class="cart-total">
 
-
                     <span>
-
                         TOTALE
-
                     </span>
 
-
                     <strong id="cart-total">
-
                         €0,00
-
                     </strong>
 
-
                 </div>
-
 
 
                 <button
                     class="checkout-button"
                     onclick="checkoutWhatsApp()"
                 >
-
                     CHECKOUT SU WHATSAPP
-
                 </button>
-
 
             </div>
 
-
         </div>
 
-
     </div>
-
 
 
     <!-- =====================================================
@@ -374,30 +277,19 @@
 
     <section class="final-info">
 
-
         <div>
-
             SHOP ONLINE • ORIGINAL QUALITY
-
         </div>
 
-
         <div>
-
             PAGAMENTO ALLA CONSEGNA
-
         </div>
-
 
         <div>
-
             CONSEGNA 24H NAPOLI E PROVINCIA • 48H TUTTA ITALIA
-
         </div>
-
 
     </section>
-
 
 
     <!-- =====================================================
@@ -406,17 +298,12 @@
 
     <section class="social-section">
 
-
         <div class="social-title">
-
             SEGUICI SUI SOCIAL
-
         </div>
 
 
-
         <div class="social-buttons">
-
 
 
             <!-- INSTAGRAM -->
@@ -428,7 +315,6 @@
                 class="social-button"
                 aria-label="Instagram"
             >
-
 
                 <svg
                     class="social-svg"
@@ -447,7 +333,6 @@
                         stroke-width="2"
                     />
 
-
                     <circle
                         cx="12"
                         cy="12"
@@ -456,7 +341,6 @@
                         stroke="currentColor"
                         stroke-width="2"
                     />
-
 
                     <circle
                         cx="17.5"
@@ -467,16 +351,11 @@
 
                 </svg>
 
-
                 <span>
-
                     INSTAGRAM
-
                 </span>
 
-
             </a>
-
 
 
             <!-- TIKTOK -->
@@ -488,7 +367,6 @@
                 class="social-button"
                 aria-label="TikTok"
             >
-
 
                 <svg
                     class="social-svg"
@@ -518,22 +396,15 @@
 
                 </svg>
 
-
                 <span>
-
                     TIKTOK
-
                 </span>
-
 
             </a>
 
-
         </div>
 
-
     </section>
-
 
 
     <!-- =====================================================
@@ -542,23 +413,15 @@
 
     <footer>
 
-
         <strong>
-
             MARIOMODAGOLDSHOP
-
         </strong>
 
-
         <p>
-
             SPEDIZIONE GARANTITA ENTRO 48 ORE
-
         </p>
 
-
     </footer>
-
 
 
     <!-- =====================================================
@@ -566,7 +429,6 @@
     ====================================================== -->
 
     <script src="script.js"></script>
-
 
 </body>
 
