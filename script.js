@@ -579,7 +579,7 @@ function createProductCard(product) {
             "discount-badge";
 
         badge.textContent =
-            "SCONTO";
+            "PROMO";
 
 
         priceArea.appendChild(
