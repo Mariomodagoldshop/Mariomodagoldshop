@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap');
+
+
 /* =========================================================
    RESET
 ========================================================= */
@@ -35,17 +38,19 @@ body {
     --gold: #d4af37;
     --gold-dark: #9b7615;
     --gold-light: #f3df8c;
+
     --purple: #8e44ad;
-    --purple-dark: #5f2875;
+    --purple-dark: #542565;
 }
 
 
 /* =========================================================
-   BANNER
+   BANNER SPEDIZIONE
 ========================================================= */
 
 .shipping-banner {
     width: 100%;
+
     padding: 10px 15px;
 
     background:
@@ -64,6 +69,7 @@ body {
 
     font-size: 13px;
     font-weight: 900;
+
     letter-spacing: .5px;
 }
 
@@ -74,11 +80,13 @@ body {
 
 .header {
     width: 100%;
+
     min-height: 75px;
 
     padding: 12px 5%;
 
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 
@@ -91,224 +99,66 @@ body {
 
 
 /* =========================================================
-   LOGO - VERSIONE DEFINITIVA
+   LOGO SUPERIORE
 ========================================================= */
 
 .logo-3d {
-    display: inline-block !important;
+    display: inline-block;
 
-    font-family: Impact, Haettenschweiler, "Arial Black", sans-serif !important;
+    font-family:
+        'Montserrat',
+        sans-serif;
 
-    font-size: 25px !important;
-    font-weight: 900 !important;
+    font-size: 25px;
 
-    letter-spacing: -1px !important;
+    font-weight: 900;
 
-    line-height: 1 !important;
+    letter-spacing: -1.5px;
 
-    white-space: nowrap !important;
+    line-height: 1;
 
-    transform: scaleX(0.75) !important;
-    transform-origin: left center !important;
+    white-space: nowrap;
 
-    margin-right: -25px !important;
+    transform: scaleX(0.82);
+
+    transform-origin: left center;
+
+    margin-right: -25px;
 }
 
 
-/* MARIO */
+/* =========================================================
+   MARIO
+========================================================= */
 
-.logo-3d .logo-mario {
-    color: #ffffff !important;
+.logo-mario {
+    color: #ffffff;
 
-    -webkit-text-stroke: 2px #000000 !important;
+    -webkit-text-stroke: 1.8px #000000;
 
     text-shadow:
         2px 2px 0 #000000,
-        3px 3px 0 #000000 !important;
+        3px 3px 5px rgba(0,0,0,.35);
 }
 
 
-/* MODAGOLDSHOP */
+/* =========================================================
+   MODAGOLDSHOP
+========================================================= */
 
-.logo-3d .logo-moda {
-    color: #8e44ad !important;
+.logo-moda {
+    color: var(--purple);
 
-    -webkit-text-stroke: 1px #000000 !important;
+    -webkit-text-stroke: 1px #000000;
 
     text-shadow:
-        2px 2px 0 #542565,
-        3px 3px 0 #421d50 !important;
+        2px 2px 0 var(--purple-dark),
+        3px 3px 5px rgba(0,0,0,.30);
 }
 
 
 /* =========================================================
-   LOGO CENTRALE
-========================================================= */
-
-.hero-logo {
-    display: block !important;
-
-    width: 100% !important;
-
-    font-family: Impact, Haettenschweiler, "Arial Black", sans-serif !important;
-
-    font-size: clamp(35px, 6vw, 65px) !important;
-
-    font-weight: 900 !important;
-
-    letter-spacing: -1px !important;
-
-    line-height: 1 !important;
-
-    white-space: nowrap !important;
-
-    text-align: center !important;
-
-    transform: scaleX(0.78) !important;
-}
-
-
-/* MARIO CENTRALE */
-
-.hero-logo .logo-mario {
-    color: #ffffff !important;
-
-    -webkit-text-stroke: 3px #000000 !important;
-
-    text-shadow:
-        3px 3px 0 #000000,
-        5px 5px 0 #000000 !important;
-}
-
-
-/* MODAGOLDSHOP CENTRALE */
-
-.hero-logo .logo-moda {
-    color: #8e44ad !important;
-
-    -webkit-text-stroke: 1.5px #000000 !important;
-
-    text-shadow:
-        3px 3px 0 #542565,
-        5px 5px 0 #421d50 !important;
-}
-
-
-/* =========================================================
-   SMARTPHONE
-========================================================= */
-
-@media (max-width: 700px) {
-
-    .logo-3d {
-        font-size: 15px !important;
-
-        letter-spacing: -0.7px !important;
-
-        transform: scaleX(0.70) !important;
-
-        transform-origin: left center !important;
-
-        margin-right: -35px !important;
-    }
-
-
-    .logo-3d .logo-mario {
-        -webkit-text-stroke: 1.5px #000000 !important;
-
-        text-shadow:
-            1px 1px 0 #000000,
-            2px 2px 0 #000000 !important;
-    }
-
-
-    .logo-3d .logo-moda {
-        -webkit-text-stroke: 0.8px #000000 !important;
-
-        text-shadow:
-            1px 1px 0 #542565,
-            2px 2px 0 #421d50 !important;
-    }
-
-
-    .hero-logo {
-        font-size: 29px !important;
-
-        letter-spacing: -1px !important;
-
-        transform: scaleX(0.72) !important;
-    }
-
-
-    .hero-logo .logo-mario {
-        -webkit-text-stroke: 2px #000000 !important;
-
-        text-shadow:
-            2px 2px 0 #000000,
-            3px 3px 0 #000000 !important;
-    }
-
-
-    .hero-logo .logo-moda {
-        -webkit-text-stroke: 1px #000000 !important;
-
-        text-shadow:
-            2px 2px 0 #542565,
-            3px 3px 0 #421d50 !important;
-    }
-
-}
-
-
-/* =========================================================
-   SMARTPHONE PICCOLO
-========================================================= */
-
-@media (max-width: 380px) {
-
-    .logo-3d {
-        font-size: 13px !important;
-
-        transform: scaleX(0.65) !important;
-
-        margin-right: -45px !important;
-    }
-
-
-    .hero-logo {
-        font-size: 24px !important;
-
-        transform: scaleX(0.68) !important;
-    }
-
-}
-
-
-/* =========================================================
-   SMARTPHONE MOLTO PICCOLO
-========================================================= */
-
-@media (max-width: 320px) {
-
-    .logo-3d {
-        font-size: 11px !important;
-
-        transform: scaleX(0.60) !important;
-
-        margin-right: -55px !important;
-    }
-
-
-    .hero-logo {
-        font-size: 21px !important;
-
-        transform: scaleX(0.64) !important;
-    }
-
-}
-
-/* =========================================================
-   CARRELLO HEADER
+   BOTTONE CARRELLO
 ========================================================= */
 
 .cart-button {
@@ -317,6 +167,7 @@ body {
     padding: 8px 14px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -329,6 +180,7 @@ body {
     color: #111111;
 
     border: 2px solid var(--gold);
+
     border-radius: 5px;
 
     cursor: pointer;
@@ -346,12 +198,14 @@ body {
     height: 22px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     border-radius: 50%;
 
     background: var(--gold);
+
     color: #ffffff;
 
     font-size: 11px;
@@ -375,25 +229,63 @@ body {
     border-bottom: 1px solid #dfc879;
 }
 
+
+/* =========================================================
+   LOGO CENTRALE
+========================================================= */
+
 .hero-logo {
     width: 100%;
 
     font-family:
-        Impact,
-        Haettenschweiler,
-        "Arial Black",
+        'Montserrat',
         sans-serif;
 
-    font-size: clamp(38px, 7vw, 75px);
+    font-size: clamp(34px, 5.5vw, 65px);
 
     font-weight: 900;
 
-    letter-spacing: 3px;
+    letter-spacing: -1.5px;
 
     line-height: 1;
 
     white-space: nowrap;
+
+    text-align: center;
+
+    transform: scaleX(0.88);
+
+    transform-origin: center center;
 }
+
+
+/* MARIO CENTRALE */
+
+.hero-logo .logo-mario {
+    color: #ffffff;
+
+    -webkit-text-stroke: 2.5px #000000;
+
+    text-shadow:
+        3px 3px 0 #000000,
+        5px 5px 0 #000000,
+        7px 7px 10px rgba(0,0,0,.35);
+}
+
+
+/* MODAGOLDSHOP CENTRALE */
+
+.hero-logo .logo-moda {
+    color: var(--purple);
+
+    -webkit-text-stroke: 1.5px #000000;
+
+    text-shadow:
+        3px 3px 0 var(--purple-dark),
+        5px 5px 0 #421d50,
+        7px 7px 10px rgba(0,0,0,.35);
+}
+
 
 .hero p {
     margin-top: 18px;
@@ -401,6 +293,7 @@ body {
     color: #555555;
 
     font-size: 13px;
+
     font-weight: 800;
 
     letter-spacing: 4px;
@@ -417,6 +310,7 @@ body {
     padding: 15px 5%;
 
     display: flex;
+
     align-items: center;
 
     gap: 9px;
@@ -437,6 +331,7 @@ body {
     display: none;
 }
 
+
 .category-button {
     min-height: 42px;
 
@@ -449,16 +344,20 @@ body {
     color: #111111;
 
     border: 1px solid var(--gold);
+
     border-radius: 5px;
 
     cursor: pointer;
 
     font-size: 12px;
+
     font-weight: 900;
 }
 
+
 .category-button.active {
     background: var(--gold);
+
     color: #ffffff;
 }
 
@@ -469,6 +368,7 @@ body {
 
 main {
     width: 100%;
+
     max-width: 1500px;
 
     margin: 0 auto;
@@ -478,7 +378,7 @@ main {
 
 
 /* =========================================================
-   PRODOTTI
+   GRIGLIA PRODOTTI
 ========================================================= */
 
 .products-grid {
@@ -492,6 +392,11 @@ main {
     gap: 25px;
 }
 
+
+/* =========================================================
+   CARD PRODOTTO
+========================================================= */
+
 .product-card {
     width: 100%;
 
@@ -500,11 +405,17 @@ main {
     background: #ffffff;
 
     border: 1px solid var(--gold);
+
     border-radius: 5px;
 
     box-shadow:
         0 4px 15px rgba(180,145,35,.12);
 }
+
+
+/* =========================================================
+   FOTO PRODOTTO
+========================================================= */
 
 .product-image-container {
     width: 100%;
@@ -518,6 +429,7 @@ main {
     border-bottom: 1px solid #dfc879;
 }
 
+
 .product-image {
     width: 100%;
     height: 100%;
@@ -527,11 +439,21 @@ main {
     object-fit: cover;
 }
 
+
+/* =========================================================
+   INFORMAZIONI PRODOTTO
+========================================================= */
+
 .product-info {
     width: 100%;
 
     padding: 15px;
 }
+
+
+/* =========================================================
+   PREZZO
+========================================================= */
 
 .product-price-area {
     min-height: 60px;
@@ -539,16 +461,21 @@ main {
     margin-bottom: 12px;
 
     display: flex;
+
     flex-direction: column;
+
     justify-content: center;
 }
+
 
 .product-price {
     color: var(--gold-dark);
 
     font-size: 23px;
+
     font-weight: 900;
 }
+
 
 .product-old-price {
     color: #888888;
@@ -557,6 +484,7 @@ main {
 
     text-decoration: line-through;
 }
+
 
 .discount-badge {
     width: fit-content;
@@ -572,6 +500,7 @@ main {
     border: 1px solid var(--gold);
 
     font-size: 10px;
+
     font-weight: 900;
 }
 
@@ -586,11 +515,13 @@ main {
     margin-bottom: 12px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     gap: 10px;
 }
+
 
 .quantity-button {
     width: 38px;
@@ -601,13 +532,16 @@ main {
     color: #111111;
 
     border: 1px solid var(--gold);
+
     border-radius: 4px;
 
     cursor: pointer;
 
     font-size: 20px;
+
     font-weight: 900;
 }
+
 
 .quantity-value {
     min-width: 28px;
@@ -615,12 +549,13 @@ main {
     text-align: center;
 
     font-size: 15px;
+
     font-weight: 900;
 }
 
 
 /* =========================================================
-   AGGIUNGI CARRELLO
+   AGGIUNGI AL CARRELLO
 ========================================================= */
 
 .add-cart-button {
@@ -641,22 +576,26 @@ main {
     color: #ffffff;
 
     border: 1px solid var(--gold-dark);
+
     border-radius: 4px;
 
     cursor: pointer;
 
     font-size: 12px;
+
     font-weight: 900;
 }
 
+
 .add-cart-button.added {
     background: #111111;
+
     color: var(--gold-light);
 }
 
 
 /* =========================================================
-   CARICAMENTO / NESSUN PRODOTTO
+   CARICAMENTO
 ========================================================= */
 
 .loading,
@@ -670,6 +609,7 @@ main {
     color: var(--gold-dark);
 
     font-size: 14px;
+
     font-weight: 900;
 }
 
@@ -695,23 +635,32 @@ main {
     background: rgba(0,0,0,.60);
 }
 
+
 .cart-overlay.open {
     display: flex;
 }
 
+
 .cart {
     width: 440px;
+
     max-width: 100%;
 
     height: 100%;
 
     display: flex;
+
     flex-direction: column;
 
     background: #ffffff;
 
     border-left: 3px solid var(--gold);
 }
+
+
+/* =========================================================
+   HEADER CARRELLO
+========================================================= */
 
 .cart-header {
     width: 100%;
@@ -721,16 +670,21 @@ main {
     padding: 15px 20px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     border-bottom: 2px solid var(--gold);
 }
 
+
 .cart-header h2 {
     font-size: 20px;
+
     font-weight: 900;
 }
+
 
 .close-cart {
     border: none;
@@ -744,6 +698,11 @@ main {
     font-size: 32px;
 }
 
+
+/* =========================================================
+   ARTICOLI CARRELLO
+========================================================= */
+
 .cart-items {
     width: 100%;
 
@@ -753,6 +712,7 @@ main {
 
     padding: 10px 20px;
 }
+
 
 .cart-item {
     width: 100%;
@@ -766,6 +726,7 @@ main {
     border-bottom: 1px solid #e3d18b;
 }
 
+
 .cart-item-image {
     width: 80px;
     height: 80px;
@@ -777,11 +738,13 @@ main {
     border: 1px solid var(--gold);
 }
 
+
 .cart-item-info {
     min-width: 0;
 
     flex: 1;
 }
+
 
 .cart-item-price {
     margin-bottom: 6px;
@@ -789,8 +752,10 @@ main {
     color: var(--gold-dark);
 
     font-size: 17px;
+
     font-weight: 900;
 }
+
 
 .cart-item-quantity {
     margin-bottom: 7px;
@@ -800,7 +765,10 @@ main {
     font-size: 13px;
 }
 
+
 .remove-item {
+    margin-right: 8px;
+
     border: none;
 
     background: transparent;
@@ -812,13 +780,20 @@ main {
     font-size: 13px;
 }
 
+
+/* =========================================================
+   CARRELLO VUOTO
+========================================================= */
+
 .empty-cart {
     flex: 1;
 
     display: flex;
+
     flex-direction: column;
 
     align-items: center;
+
     justify-content: center;
 
     color: #777777;
@@ -826,11 +801,17 @@ main {
     text-align: center;
 }
 
+
 .empty-cart-icon {
     margin-bottom: 10px;
 
     font-size: 40px;
 }
+
+
+/* =========================================================
+   FOOTER CARRELLO
+========================================================= */
 
 .cart-footer {
     width: 100%;
@@ -842,24 +823,34 @@ main {
     border-top: 2px solid var(--gold);
 }
 
+
 .cart-total {
     width: 100%;
 
     margin-bottom: 15px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     font-size: 19px;
+
     font-weight: 900;
 }
+
 
 .cart-total strong {
     color: var(--gold-dark);
 
     font-size: 23px;
 }
+
+
+/* =========================================================
+   WHATSAPP
+========================================================= */
 
 .checkout-button {
     width: 100%;
@@ -873,17 +864,19 @@ main {
     color: #ffffff;
 
     border: none;
+
     border-radius: 5px;
 
     cursor: pointer;
 
     font-size: 13px;
+
     font-weight: 900;
 }
 
 
 /* =========================================================
-   INFO FINALI
+   INFORMAZIONI FINALI
 ========================================================= */
 
 .final-info {
@@ -898,15 +891,18 @@ main {
     text-align: center;
 
     border-top: 1px solid var(--gold);
+
     border-bottom: 1px solid var(--gold);
 
     font-size: 11px;
+
     font-weight: 800;
 
     letter-spacing: 1.5px;
 
     line-height: 2.2;
 }
+
 
 .final-info div:first-child {
     color: var(--gold-dark);
@@ -927,28 +923,34 @@ main {
     background: #ffffff;
 }
 
+
 .social-title {
     margin-bottom: 18px;
 
     color: var(--gold-dark);
 
     font-size: 12px;
+
     font-weight: 900;
 
     letter-spacing: 2px;
 }
 
+
 .social-buttons {
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     gap: 14px;
 }
 
+
 .social-button {
     min-width: 170px;
+
     min-height: 45px;
 
     padding: 10px 18px;
@@ -956,6 +958,7 @@ main {
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     gap: 9px;
@@ -965,13 +968,16 @@ main {
     color: #111111;
 
     border: 1px solid var(--gold);
+
     border-radius: 5px;
 
     text-decoration: none;
 
     font-size: 12px;
+
     font-weight: 900;
 }
+
 
 .social-svg {
     width: 24px;
@@ -999,6 +1005,7 @@ footer {
     border-top: 2px solid var(--gold);
 }
 
+
 footer strong {
     display: block;
 
@@ -1010,6 +1017,7 @@ footer strong {
 
     letter-spacing: 1px;
 }
+
 
 footer p {
     color: #666666;
@@ -1040,6 +1048,8 @@ footer p {
 
 @media (max-width: 700px) {
 
+    /* HEADER */
+
     .header {
         min-height: 60px;
 
@@ -1049,24 +1059,46 @@ footer p {
     }
 
 
-    /* LOGO SMARTPHONE */
+    /* LOGO */
 
     .logo-3d {
         flex: 1;
 
         min-width: 0;
 
-        font-size: 15px;
+        font-size: 14px;
 
-        letter-spacing: .5px;
+        letter-spacing: -1px;
 
         white-space: nowrap;
 
-        line-height: 1;
+        transform: scaleX(0.78);
 
-        overflow: visible;
+        transform-origin: left center;
+
+        margin-right: -30px;
     }
 
+
+    .logo-3d .logo-mario {
+        -webkit-text-stroke: 1.3px #000000;
+
+        text-shadow:
+            1px 1px 0 #000000,
+            2px 2px 0 #000000;
+    }
+
+
+    .logo-3d .logo-moda {
+        -webkit-text-stroke: .8px #000000;
+
+        text-shadow:
+            1px 1px 0 var(--purple-dark),
+            2px 2px 0 #421d50;
+    }
+
+
+    /* CARRELLO */
 
     .cart-button {
         width: 44px;
@@ -1110,12 +1142,29 @@ footer p {
 
 
     .hero-logo {
-        font-size:
-            clamp(24px, 8.5vw, 45px);
+        font-size: 28px;
 
-        letter-spacing: .8px;
+        letter-spacing: -1.5px;
 
-        white-space: nowrap;
+        transform: scaleX(0.82);
+    }
+
+
+    .hero-logo .logo-mario {
+        -webkit-text-stroke: 2px #000000;
+
+        text-shadow:
+            2px 2px 0 #000000,
+            3px 3px 0 #000000;
+    }
+
+
+    .hero-logo .logo-moda {
+        -webkit-text-stroke: 1px #000000;
+
+        text-shadow:
+            2px 2px 0 var(--purple-dark),
+            3px 3px 0 #421d50;
     }
 
 
@@ -1134,8 +1183,6 @@ footer p {
         padding: 10px;
 
         gap: 7px;
-
-        overflow-x: auto;
     }
 
 
@@ -1155,25 +1202,13 @@ footer p {
     }
 
 
-    /* PRODOTTI 2 PER RIGA */
+    /* PRODOTTI */
 
     .products-grid {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
 
         gap: 10px;
-    }
-
-
-    /* CARD */
-
-    .product-card {
-        min-width: 0;
-    }
-
-
-    .product-image-container {
-        aspect-ratio: 1 / 1;
     }
 
 
@@ -1275,7 +1310,7 @@ footer p {
     }
 
 
-    /* INFO */
+    /* INFO FINALI */
 
     .final-info {
         padding: 17px 8px;
@@ -1333,23 +1368,18 @@ footer p {
 @media (max-width: 380px) {
 
     .logo-3d {
-        font-size: 13px;
+        font-size: 12px;
 
-        letter-spacing: .3px;
+        transform: scaleX(0.72);
+
+        margin-right: -40px;
     }
 
 
     .hero-logo {
         font-size: 23px;
 
-        letter-spacing: .4px;
-    }
-
-
-    .hero p {
-        font-size: 7px;
-
-        letter-spacing: 1.3px;
+        transform: scaleX(0.78);
     }
 
 
@@ -1398,19 +1428,16 @@ footer p {
     .logo-3d {
         font-size: 11px;
 
-        letter-spacing: .2px;
-    }
+        transform: scaleX(0.65);
 
-
-    .cart-button {
-        width: 40px;
-
-        min-width: 40px;
+        margin-right: -50px;
     }
 
 
     .hero-logo {
         font-size: 20px;
+
+        transform: scaleX(0.70);
     }
 
 
