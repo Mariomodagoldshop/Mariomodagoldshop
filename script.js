@@ -1,97 +1,35 @@
-/* =====================================================
+/* =========================================================
    MARIOMODAGOLDSHOP
-===================================================== */
+   JAVASCRIPT
+========================================================= */
 
 
-/* =====================================================
-   CONFIGURAZIONE
-===================================================== */
+/* =========================================================
+   IMPOSTAZIONI
+========================================================= */
+
+const WHATSAPP_NUMBER = "393510901180";
 
 
-const GITHUB_USERNAME = "Mariomodagoldshop";
-
-
-/*
-   NOME ESATTO DEL REPOSITORY
-*/
-
-const GITHUB_REPOSITORY =
-    "Mariomodagoldshop";
-
-
-/*
-   NUMERO WHATSAPP
-*/
-
-const WHATSAPP_NUMBER =
-    "393510901180";
-
-
-/*
-   API GITHUB
-*/
-
-const GITHUB_API =
-    `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPOSITORY}/contents/`;
-
-
-/* =====================================================
+/* =========================================================
    CATEGORIE
-===================================================== */
+========================================================= */
 
-const CATEGORIES = {
-
-    scarpe: "SCARPE",
-
-    borsa: "BORSE",
-
-    borse: "BORSE",
-
-    giubbino: "GIUBBINI",
-
-    giubbini: "GIUBBINI",
-
-    cintura: "CINTURE",
-
-    cinture: "CINTURE",
-
-    occhiale: "OCCHIALI",
-
-    occhiali: "OCCHIALI",
-
-    cappello: "CAPPELLI",
-
-    cappelli: "CAPPELLI",
-
-    tshirt: "T-SHIRT",
-
-    tshirts: "T-SHIRT",
-
-    orologio: "OROLOGI",
-
-    orologi: "OROLOGI"
-
-};
-
-
-/* =====================================================
-   ESTENSIONI SUPPORTATE
-===================================================== */
-
-const ALLOWED_EXTENSIONS = [
-
-    "jpg",
-    "jpeg",
-    "png",
-    "webp",
-    "gif"
-
+const categories = [
+    "scarpe",
+    "borsa",
+    "giubbino",
+    "cintura",
+    "occhiale",
+    "cappello",
+    "tshirt",
+    "orologio"
 ];
 
 
-/* =====================================================
-   VARIABILI
-===================================================== */
+/* =========================================================
+   PRODOTTI
+========================================================= */
 
 let products = [];
 
@@ -100,210 +38,79 @@ let cart = [];
 let currentCategory = "all";
 
 
-/* =====================================================
-   CARICA PRODOTTI DA GITHUB
-===================================================== */
+/* =========================================================
+   ELEMENTI HTML
+========================================================= */
 
-async function loadProducts() {
+const productsContainer =
+    document.getElementById("products");
 
-    const loading =
-        document.getElementById("loading");
+const loading =
+    document.getElementById("loading");
 
+const noProducts =
+    document.getElementById("no-products");
 
-    try {
+const cartOverlay =
+    document.getElementById("cart-overlay");
 
-        const response =
-            await fetch(GITHUB_API);
+const cartItemsContainer =
+    document.getElementById("cart-items");
 
+const emptyCart =
+    document.getElementById("empty-cart");
 
-        if (!response.ok) {
+const cartTotal =
+    document.getElementById("cart-total");
 
-            throw new Error(
-                "Repository non trovato."
-            );
+const cartCount =
+    document.getElementById("cart-count");
 
-        }
 
+/* =========================================================
+   FORMATTAZIONE PREZZO
+========================================================= */
 
-        const files =
-            await response.json();
+function formatPrice(price) {
 
-
-        products = [];
-
-
-        files.forEach(file => {
-
-            if (file.type !== "file") {
-
-                return;
-
-            }
-
-
-            const extension =
-                getExtension(file.name);
-
-
-            if (
-                !ALLOWED_EXTENSIONS.includes(
-                    extension
-                )
-            ) {
-
-                return;
-
-            }
-
-
-            const product =
-                parseProduct(file.name);
-
-
-            if (!product) {
-
-                return;
-
-            }
-
-
-            product.image =
-                file.download_url;
-
-
-            products.push(product);
-
-        });
-
-
-        products.sort((a, b) => {
-
-            if (
-                a.category !==
-                b.category
-            ) {
-
-                return a.category.localeCompare(
-                    b.category
-                );
-
-            }
-
-
-            return a.number - b.number;
-
-        });
-
-
-        loading.style.display =
-            "none";
-
-
-        renderProducts();
-
-    }
-
-
-    catch (error) {
-
-        console.error(error);
-
-
-        loading.innerHTML = `
-
-            <strong>
-                IMPOSSIBILE CARICARE I PRODOTTI
-            </strong>
-
-            <br><br>
-
-            Controlla:
-
-            <br>
-
-            • il tuo username GitHub
-
-            <br>
-
-            • il nome del repository
-
-            <br>
-
-            • che il repository sia pubblico
-
-        `;
-
-    }
+    return new Intl.NumberFormat("it-IT", {
+        style: "currency",
+        currency: "EUR"
+    }).format(price);
 
 }
 
 
-/* =====================================================
-   ESTENSIONE FILE
-===================================================== */
+/* =========================================================
+   PARSER NOME FILE
+=========================================================
 
-function getExtension(fileName) {
-
-    return fileName
-        .split(".")
-        .pop()
-        .toLowerCase();
-
-}
-
-
-/* =====================================================
-   INTERPRETAZIONE NOME FILE
-=====================================================
-
-   ESEMPI:
+   Esempi:
 
    Scarpe1170.jpg
-
-   = Scarpe #1
-   = 170 €
-
    Borsa1sconto330220.jpg
+   Orologio2sconto500350.png
 
-   = Borsa #1
-   = prezzo originale 330 €
-   = prezzo finale 220 €
+========================================================= */
 
-===================================================== */
+function parseProductFilename(filename) {
 
-function parseProduct(fileName) {
-
-    const nameWithoutExtension =
-        fileName.substring(
-            0,
-            fileName.lastIndexOf(".")
-        );
+    const name =
+        filename
+            .replace(/\.[^/.]+$/, "")
+            .toLowerCase();
 
 
-    const lowerName =
-        nameWithoutExtension.toLowerCase();
+    let category = null;
 
 
-    const categoryKeys =
-        Object.keys(CATEGORIES)
-            .sort(
-                (a, b) =>
-                    b.length - a.length
-            );
+    /* Trova categoria */
 
+    for (const cat of categories) {
 
-    let categoryKey = null;
+        if (name.startsWith(cat)) {
 
-
-    for (
-        const key of categoryKeys
-    ) {
-
-        if (
-            lowerName.startsWith(key)
-        ) {
-
-            categoryKey = key;
+            category = cat;
 
             break;
 
@@ -312,108 +119,87 @@ function parseProduct(fileName) {
     }
 
 
-    if (!categoryKey) {
+    if (!category) {
 
         return null;
 
     }
 
 
-    const remaining =
-        nameWithoutExtension.substring(
-            categoryKey.length
-        );
-
-
-    /* =========================
-       PRODOTTO SCONTATO
-    ========================== */
-
-    const discountRegex =
-        /^(\d+)sconto(\d+(?:[.,]\d{1,2})?)(\d+(?:[.,]\d{1,2})?)$/i;
-
+    /* =====================================================
+       SCONTO
+    ====================================================== */
 
     const discountMatch =
-        remaining.match(
-            discountRegex
+        name.match(
+            /sconto(\d+(?:[.,]\d+)?)(\d+(?:[.,]\d+)?)/
         );
 
 
     if (discountMatch) {
 
-        const number =
-            parseInt(
-                discountMatch[1],
-                10
+        const oldPrice =
+            parseFloat(
+                discountMatch[1]
+                    .replace(",", ".")
             );
 
 
-        const originalPrice =
+        const newPrice =
             parseFloat(
                 discountMatch[2]
                     .replace(",", ".")
             );
 
 
-        const discountedPrice =
-            parseFloat(
-                discountMatch[3]
-                    .replace(",", ".")
+        const numberMatch =
+            name.match(
+                new RegExp(
+                    "^" +
+                    category +
+                    "(\\d+)"
+                )
             );
 
 
-        if (
-            discountedPrice >=
-            originalPrice
-        ) {
-
-            return null;
-
-        }
+        const number =
+            numberMatch
+                ? numberMatch[1]
+                : "1";
 
 
         return {
 
-            id: fileName,
+            id: filename,
 
-            number,
+            filename: filename,
 
-            category: categoryKey,
+            category: category,
 
-            categoryName:
-                CATEGORIES[categoryKey],
+            number: number,
 
-            image: "",
+            price: newPrice,
 
-            originalPrice,
+            oldPrice: oldPrice,
 
-            price:
-                discountedPrice,
-
-            discounted: true,
-
-            discount:
-                calculateDiscount(
-                    originalPrice,
-                    discountedPrice
-                )
+            discounted: true
 
         };
 
     }
 
 
-    /* =========================
-       PRODOTTO NORMALE
-    ========================== */
-
-    const normalRegex =
-        /^(\d+)(\d+(?:[.,]\d{1,2})?)$/;
-
+    /* =====================================================
+       PREZZO NORMALE
+    ====================================================== */
 
     const normalMatch =
-        remaining.match(
-            normalRegex
+        name.match(
+            new RegExp(
+                "^" +
+                category +
+                "(\\d+)(\\d+(?:[.,]\\d+)?)$"
+            )
         );
 
 
@@ -425,10 +211,7 @@ function parseProduct(fileName) {
 
 
     const number =
-        parseInt(
-            normalMatch[1],
-            10
-        );
+        normalMatch[1];
 
 
     const price =
@@ -440,100 +223,424 @@ function parseProduct(fileName) {
 
     return {
 
-        id: fileName,
+        id: filename,
 
-        number,
+        filename: filename,
 
-        category: categoryKey,
+        category: category,
 
-        categoryName:
-            CATEGORIES[categoryKey],
+        number: number,
 
-        image: "",
+        price: price,
 
-        originalPrice: price,
+        oldPrice: null,
 
-        price,
-
-        discounted: false,
-
-        discount: 0
+        discounted: false
 
     };
 
 }
 
 
-/* =====================================================
-   CALCOLO SCONTO
-===================================================== */
+/* =========================================================
+   ELENCO FILE
+=========================================================
 
-function calculateDiscount(
-    originalPrice,
-    discountedPrice
-) {
+   Inserisci qui i nomi delle immagini presenti
+   nel repository GitHub.
 
-    return Math.round(
+   Esempi:
 
-        (
-            1 -
-            discountedPrice /
-            originalPrice
-        ) * 100
+   Scarpe1170.jpg
+   Borsa1sconto330220.jpg
 
-    );
+========================================================= */
+
+const imageFiles = [
+
+    /* SCARPE */
+
+    "Scarpe1170.jpg",
+    "Scarpe2200.jpg",
+
+
+    /* BORSE */
+
+    "Borsa1sconto330220.jpg",
+    "Borsa2400.jpg",
+
+
+    /* GIUBBINI */
+
+    "Giubbino1250.jpg",
+
+
+    /* CINTURE */
+
+    "Cintura1100.jpg",
+
+
+    /* OCCHIALI */
+
+    "Occhiale1150.jpg",
+
+
+    /* CAPPELLI */
+
+    "Cappello180.jpg",
+
+
+    /* T-SHIRT */
+
+    "Tshirt1120.jpg",
+
+
+    /* OROLOGI */
+
+    "Orologio1350.jpg"
+
+];
+
+
+/* =========================================================
+   CREA PRODOTTI
+========================================================= */
+
+function loadProducts() {
+
+    products = [];
+
+
+    imageFiles.forEach(filename => {
+
+        const product =
+            parseProductFilename(filename);
+
+
+        if (product) {
+
+            products.push(product);
+
+        }
+
+    });
+
+
+    loading.style.display = "none";
+
+
+    renderProducts();
 
 }
 
 
-/* =====================================================
-   CREA PRODOTTI
-===================================================== */
+/* =========================================================
+   CREA CARD PRODOTTO
+========================================================= */
 
-function renderProducts() {
+function createProductCard(product) {
 
-    const container =
-        document.getElementById(
-            "products"
-        );
+    const card =
+        document.createElement("article");
 
 
-    const noProducts =
-        document.getElementById(
-            "no-products"
-        );
+    card.className = "product-card";
 
 
-    container.innerHTML = "";
+    card.dataset.category =
+        product.category;
 
 
-    let filteredProducts;
+    const imageContainer =
+        document.createElement("div");
 
 
-    if (
-        currentCategory === "all"
-    ) {
+    imageContainer.className =
+        "product-image-container";
 
-        filteredProducts =
-            products;
+
+    const image =
+        document.createElement("img");
+
+
+    image.className =
+        "product-image";
+
+
+    image.src =
+        product.filename;
+
+
+    image.alt =
+        "Prodotto MARIOMODAGOLDSHOP";
+
+
+    image.loading = "lazy";
+
+
+    imageContainer.appendChild(image);
+
+
+    const info =
+        document.createElement("div");
+
+
+    info.className =
+        "product-info";
+
+
+    /* =====================================================
+       PREZZO
+    ====================================================== */
+
+    const priceArea =
+        document.createElement("div");
+
+
+    priceArea.className =
+        "product-price-area";
+
+
+    if (product.discounted) {
+
+        const oldPrice =
+            document.createElement("span");
+
+
+        oldPrice.className =
+            "product-old-price";
+
+
+        oldPrice.textContent =
+            formatPrice(product.oldPrice);
+
+
+        const newPrice =
+            document.createElement("span");
+
+
+        newPrice.className =
+            "product-price";
+
+
+        newPrice.textContent =
+            formatPrice(product.price);
+
+
+        const badge =
+            document.createElement("span");
+
+
+        badge.className =
+            "discount-badge";
+
+
+        badge.textContent =
+            "SCONTO";
+
+
+        priceArea.appendChild(oldPrice);
+
+        priceArea.appendChild(newPrice);
+
+        priceArea.appendChild(badge);
+
+    } else {
+
+        const price =
+            document.createElement("span");
+
+
+        price.className =
+            "product-price";
+
+
+        price.textContent =
+            formatPrice(product.price);
+
+
+        priceArea.appendChild(price);
 
     }
 
-    else {
 
-        filteredProducts =
-            products.filter(
+    /* =====================================================
+       QUANTITÀ
+    ====================================================== */
+
+    const quantityRow =
+        document.createElement("div");
+
+
+    quantityRow.className =
+        "quantity-row";
+
+
+    const minus =
+        document.createElement("button");
+
+
+    minus.className =
+        "quantity-button";
+
+
+    minus.textContent =
+        "−";
+
+
+    const quantity =
+        document.createElement("span");
+
+
+    quantity.className =
+        "quantity-value";
+
+
+    quantity.textContent =
+        "1";
+
+
+    const plus =
+        document.createElement("button");
+
+
+    plus.className =
+        "quantity-button";
+
+
+    plus.textContent =
+        "+";
+
+
+    let quantityValue = 1;
+
+
+    minus.addEventListener(
+        "click",
+        () => {
+
+            if (quantityValue > 1) {
+
+                quantityValue--;
+
+                quantity.textContent =
+                    quantityValue;
+
+            }
+
+        }
+    );
+
+
+    plus.addEventListener(
+        "click",
+        () => {
+
+            quantityValue++;
+
+            quantity.textContent =
+                quantityValue;
+
+        }
+    );
+
+
+    quantityRow.appendChild(minus);
+
+    quantityRow.appendChild(quantity);
+
+    quantityRow.appendChild(plus);
+
+
+    /* =====================================================
+       BOTTONE CARRELLO
+    ====================================================== */
+
+    const addButton =
+        document.createElement("button");
+
+
+    addButton.className =
+        "add-cart-button";
+
+
+    addButton.textContent =
+        "AGGIUNGI AL CARRELLO";
+
+
+    addButton.addEventListener(
+        "click",
+        () => {
+
+            addToCart(
+                product,
+                quantityValue
+            );
+
+
+            addButton.textContent =
+                "AGGIUNTO ✓";
+
+
+            addButton.classList.add(
+                "added"
+            );
+
+
+            setTimeout(() => {
+
+                addButton.textContent =
+                    "AGGIUNGI AL CARRELLO";
+
+                addButton.classList.remove(
+                    "added"
+                );
+
+            }, 1000);
+
+        }
+    );
+
+
+    info.appendChild(priceArea);
+
+    info.appendChild(quantityRow);
+
+    info.appendChild(addButton);
+
+
+    card.appendChild(imageContainer);
+
+    card.appendChild(info);
+
+
+    return card;
+
+}
+
+
+/* =========================================================
+   MOSTRA PRODOTTI
+========================================================= */
+
+function renderProducts() {
+
+    productsContainer.innerHTML = "";
+
+
+    const filteredProducts =
+        currentCategory === "all"
+
+            ? products
+
+            : products.filter(
                 product =>
                     product.category ===
                     currentCategory
             );
 
-    }
 
-
-    if (
-        filteredProducts.length === 0
-    ) {
+    if (filteredProducts.length === 0) {
 
         noProducts.style.display =
             "block";
@@ -550,7 +657,7 @@ function renderProducts() {
     filteredProducts.forEach(
         product => {
 
-            container.appendChild(
+            productsContainer.appendChild(
                 createProductCard(product)
             );
 
@@ -560,553 +667,9 @@ function renderProducts() {
 }
 
 
-/* =====================================================
-   SCHEDA PRODOTTO
-===================================================== */
-
-function createProductCard(product) {
-
-    const card =
-        document.createElement("div");
-
-
-    card.className =
-        "product-card";
-
-
-    const cartItem =
-        cart.find(
-            item =>
-                item.id === product.id
-        );
-
-
-    const quantity =
-        cartItem
-            ? cartItem.quantity
-            : 0;
-
-
-    let priceHTML;
-
-
-    if (product.discounted) {
-
-        priceHTML = `
-
-            <div class="product-old-price">
-                ${formatPrice(
-                    product.originalPrice
-                )}
-            </div>
-
-            <div class="product-price">
-                ${formatPrice(
-                    product.price
-                )}
-            </div>
-
-            <span class="discount-badge">
-                -${product.discount}%
-            </span>
-
-        `;
-
-    }
-
-    else {
-
-        priceHTML = `
-
-            <div class="product-price">
-                ${formatPrice(
-                    product.price
-                )}
-            </div>
-
-        `;
-
-    }
-
-
-    card.innerHTML = `
-
-        <div class="product-image-container">
-
-            <img
-                src="${product.image}"
-                alt="Prodotto"
-                class="product-image"
-                loading="lazy"
-            >
-
-        </div>
-
-
-        <div class="product-info">
-
-            <div class="product-price-area">
-
-                ${priceHTML}
-
-            </div>
-
-
-            <div class="quantity-row">
-
-                <button
-                    class="quantity-button"
-                    onclick="changeQuantity(
-                        '${escapeAttribute(
-                            product.id
-                        )}',
-                        -1
-                    )"
-                >
-                    −
-                </button>
-
-
-                <span class="quantity-value">
-                    ${quantity}
-                </span>
-
-
-                <button
-                    class="quantity-button"
-                    onclick="changeQuantity(
-                        '${escapeAttribute(
-                            product.id
-                        )}',
-                        1
-                    )"
-                >
-                    +
-                </button>
-
-            </div>
-
-
-            <button
-                class="add-cart-button ${
-                    quantity > 0
-                        ? "added"
-                        : ""
-                }"
-                onclick="addToCart(
-                    '${escapeAttribute(
-                        product.id
-                    )}'
-                )"
-            >
-
-                ${
-                    quantity > 0
-                        ? "✓ NEL CARRELLO"
-                        : "AGGIUNGI AL CARRELLO"
-                }
-
-            </button>
-
-        </div>
-
-    `;
-
-
-    return card;
-
-}
-
-
-/* =====================================================
-   AGGIUNGI AL CARRELLO
-===================================================== */
-
-function addToCart(productId) {
-
-    const product =
-        products.find(
-            item =>
-                item.id === productId
-        );
-
-
-    if (!product) {
-
-        return;
-
-    }
-
-
-    let cartItem =
-        cart.find(
-            item =>
-                item.id === productId
-        );
-
-
-    if (!cartItem) {
-
-        cartItem = {
-
-            id: product.id,
-
-            number: product.number,
-
-            category:
-                product.categoryName,
-
-            price:
-                product.price,
-
-            originalPrice:
-                product.originalPrice,
-
-            image:
-                product.image,
-
-            quantity: 0
-
-        };
-
-
-        cart.push(cartItem);
-
-    }
-
-
-    cartItem.quantity++;
-
-
-    saveCart();
-
-    updateCartCount();
-
-    renderProducts();
-
-    renderCart();
-
-}
-
-
-/* =====================================================
-   CAMBIA QUANTITÀ
-===================================================== */
-
-function changeQuantity(
-    productId,
-    amount
-) {
-
-    const product =
-        products.find(
-            item =>
-                item.id === productId
-        );
-
-
-    if (!product) {
-
-        return;
-
-    }
-
-
-    let cartItem =
-        cart.find(
-            item =>
-                item.id === productId
-        );
-
-
-    if (!cartItem) {
-
-        if (amount <= 0) {
-
-            return;
-
-        }
-
-
-        cartItem = {
-
-            id: product.id,
-
-            number: product.number,
-
-            category:
-                product.categoryName,
-
-            price:
-                product.price,
-
-            originalPrice:
-                product.originalPrice,
-
-            image:
-                product.image,
-
-            quantity: 0
-
-        };
-
-
-        cart.push(cartItem);
-
-    }
-
-
-    cartItem.quantity += amount;
-
-
-    if (
-        cartItem.quantity <= 0
-    ) {
-
-        cart =
-            cart.filter(
-                item =>
-                    item.id !== productId
-            );
-
-    }
-
-
-    saveCart();
-
-    updateCartCount();
-
-    renderProducts();
-
-    renderCart();
-
-}
-
-
-/* =====================================================
-   RENDER CARRELLO
-===================================================== */
-
-function renderCart() {
-
-    const container =
-        document.getElementById(
-            "cart-items"
-        );
-
-
-    const empty =
-        document.getElementById(
-            "empty-cart"
-        );
-
-
-    const totalElement =
-        document.getElementById(
-            "cart-total"
-        );
-
-
-    container.innerHTML = "";
-
-
-    if (cart.length === 0) {
-
-        empty.style.display =
-            "flex";
-
-        totalElement.textContent =
-            "€0,00";
-
-        return;
-
-    }
-
-
-    empty.style.display =
-        "none";
-
-
-    let total = 0;
-
-
-    cart.forEach(item => {
-
-        total +=
-            item.price *
-            item.quantity;
-
-
-        const element =
-            document.createElement(
-                "div"
-            );
-
-
-        element.className =
-            "cart-item";
-
-
-        element.innerHTML = `
-
-            <img
-                src="${item.image}"
-                alt="Prodotto"
-                class="cart-item-image"
-            >
-
-
-            <div class="cart-item-info">
-
-                <div class="cart-item-price">
-                    ${formatPrice(
-                        item.price
-                    )}
-                </div>
-
-
-                <div class="cart-item-quantity">
-                    Quantità:
-                    ${item.quantity}
-                </div>
-
-
-                <button
-                    class="remove-item"
-                    onclick="removeFromCart(
-                        '${escapeAttribute(
-                            item.id
-                        )}'
-                    )"
-                >
-                    RIMUOVI
-                </button>
-
-            </div>
-
-        `;
-
-
-        container.appendChild(
-            element
-        );
-
-    });
-
-
-    totalElement.textContent =
-        formatPrice(total);
-
-}
-
-
-/* =====================================================
-   RIMUOVI DAL CARRELLO
-===================================================== */
-
-function removeFromCart(productId) {
-
-    cart =
-        cart.filter(
-            item =>
-                item.id !== productId
-        );
-
-
-    saveCart();
-
-    updateCartCount();
-
-    renderProducts();
-
-    renderCart();
-
-}
-
-
-/* =====================================================
-   NUMERO PRODOTTI
-===================================================== */
-
-function updateCartCount() {
-
-    const count =
-        cart.reduce(
-            (total, item) =>
-                total + item.quantity,
-            0
-        );
-
-
-    document.getElementById(
-        "cart-count"
-    ).textContent = count;
-
-}
-
-
-/* =====================================================
-   APRI CARRELLO
-===================================================== */
-
-function openCart() {
-
-    document
-        .getElementById(
-            "cart-overlay"
-        )
-        .classList.add("open");
-
-
-    document.body.style.overflow =
-        "hidden";
-
-
-    renderCart();
-
-}
-
-
-/* =====================================================
-   CHIUDI CARRELLO
-===================================================== */
-
-function closeCart() {
-
-    document
-        .getElementById(
-            "cart-overlay"
-        )
-        .classList.remove("open");
-
-
-    document.body.style.overflow =
-        "";
-
-}
-
-
-/* =====================================================
-   CHIUDI CLICCANDO FUORI
-===================================================== */
-
-function closeCartOutside(event) {
-
-    if (
-        event.target.id ===
-        "cart-overlay"
-    ) {
-
-        closeCart();
-
-    }
-
-}
-
-
-/* =====================================================
+/* =========================================================
    FILTRO CATEGORIA
-===================================================== */
+========================================================= */
 
 function filterCategory(
     category,
@@ -1121,12 +684,13 @@ function filterCategory(
         .querySelectorAll(
             ".category-button"
         )
-        .forEach(
-            btn =>
-                btn.classList.remove(
-                    "active"
-                )
-        );
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
 
 
     button.classList.add(
@@ -1139,16 +703,357 @@ function filterCategory(
 }
 
 
-/* =====================================================
+/* =========================================================
+   AGGIUNGI AL CARRELLO
+========================================================= */
+
+function addToCart(
+    product,
+    quantity
+) {
+
+    const existing =
+        cart.find(
+            item =>
+                item.id === product.id
+        );
+
+
+    if (existing) {
+
+        existing.quantity +=
+            quantity;
+
+    } else {
+
+        cart.push({
+
+            ...product,
+
+            quantity: quantity
+
+        });
+
+    }
+
+
+    saveCart();
+
+    renderCart();
+
+}
+
+
+/* =========================================================
+   RIMUOVI PRODOTTO
+========================================================= */
+
+function removeFromCart(id) {
+
+    cart =
+        cart.filter(
+            item =>
+                item.id !== id
+        );
+
+
+    saveCart();
+
+    renderCart();
+
+}
+
+
+/* =========================================================
+   CAMBIA QUANTITÀ CARRELLO
+========================================================= */
+
+function changeCartQuantity(
+    id,
+    change
+) {
+
+    const item =
+        cart.find(
+            product =>
+                product.id === id
+        );
+
+
+    if (!item) {
+
+        return;
+
+    }
+
+
+    item.quantity += change;
+
+
+    if (item.quantity <= 0) {
+
+        removeFromCart(id);
+
+        return;
+
+    }
+
+
+    saveCart();
+
+    renderCart();
+
+}
+
+
+/* =========================================================
+   RENDER CARRELLO
+========================================================= */
+
+function renderCart() {
+
+    cartItemsContainer.innerHTML =
+        "";
+
+
+    if (cart.length === 0) {
+
+        emptyCart.style.display =
+            "flex";
+
+    } else {
+
+        emptyCart.style.display =
+            "none";
+
+    }
+
+
+    let total = 0;
+
+    let count = 0;
+
+
+    cart.forEach(item => {
+
+        total +=
+            item.price *
+            item.quantity;
+
+
+        count +=
+            item.quantity;
+
+
+        const cartItem =
+            document.createElement("div");
+
+
+        cartItem.className =
+            "cart-item";
+
+
+        const image =
+            document.createElement("img");
+
+
+        image.className =
+            "cart-item-image";
+
+
+        image.src =
+            item.filename;
+
+
+        image.alt =
+            "Prodotto";
+
+
+        const info =
+            document.createElement("div");
+
+
+        info.className =
+            "cart-item-info";
+
+
+        const price =
+            document.createElement("div");
+
+
+        price.className =
+            "cart-item-price";
+
+
+        price.textContent =
+            formatPrice(item.price);
+
+
+        const quantity =
+            document.createElement("div");
+
+
+        quantity.className =
+            "cart-item-quantity";
+
+
+        quantity.textContent =
+            "Quantità: " +
+            item.quantity;
+
+
+        const minus =
+            document.createElement("button");
+
+
+        minus.className =
+            "remove-item";
+
+
+        minus.textContent =
+            "− 1";
+
+
+        minus.onclick =
+            () =>
+                changeCartQuantity(
+                    item.id,
+                    -1
+                );
+
+
+        const plus =
+            document.createElement("button");
+
+
+        plus.className =
+            "remove-item";
+
+
+        plus.textContent =
+            "+ 1";
+
+
+        plus.onclick =
+            () =>
+                changeCartQuantity(
+                    item.id,
+                    1
+                );
+
+
+        const remove =
+            document.createElement("button");
+
+
+        remove.className =
+            "remove-item";
+
+
+        remove.textContent =
+            "Rimuovi";
+
+
+        remove.onclick =
+            () =>
+                removeFromCart(
+                    item.id
+                );
+
+
+        info.appendChild(price);
+
+        info.appendChild(quantity);
+
+        info.appendChild(minus);
+
+        info.appendChild(plus);
+
+        info.appendChild(remove);
+
+
+        cartItem.appendChild(image);
+
+        cartItem.appendChild(info);
+
+
+        cartItemsContainer.appendChild(
+            cartItem
+        );
+
+    });
+
+
+    cartTotal.textContent =
+        formatPrice(total);
+
+
+    cartCount.textContent =
+        count;
+
+}
+
+
+/* =========================================================
+   APRI CARRELLO
+========================================================= */
+
+function openCart() {
+
+    cartOverlay.classList.add(
+        "open"
+    );
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+/* =========================================================
+   CHIUDI CARRELLO
+========================================================= */
+
+function closeCart() {
+
+    cartOverlay.classList.remove(
+        "open"
+    );
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+/* =========================================================
+   CHIUDI CLICCANDO FUORI
+========================================================= */
+
+function closeCartOutside(event) {
+
+    if (
+        event.target ===
+        cartOverlay
+    ) {
+
+        closeCart();
+
+    }
+
+}
+
+
+/* =========================================================
    CHECKOUT WHATSAPP
-===================================================== */
+========================================================= */
 
 function checkoutWhatsApp() {
 
     if (cart.length === 0) {
 
         alert(
-            "IL CARRELLO È VUOTO."
+            "Il carrello è vuoto."
         );
 
         return;
@@ -1156,23 +1061,48 @@ function checkoutWhatsApp() {
     }
 
 
-    let productList = "";
+    let message =
+        "Ciao Mariomodagoldshop, ho aggiunto questi prodotti al carrello:\n\n";
 
 
     cart.forEach(item => {
 
-        productList +=
-            `- ${item.category} #${item.number} x${item.quantity} — ${formatPrice(item.price)}\n`;
+        message +=
+            "• " +
+            item.category.toUpperCase() +
+            " " +
+            item.number +
+            " x " +
+            item.quantity +
+            " - " +
+            formatPrice(item.price) +
+            "\n";
 
     });
 
 
-    const message =
-        `Ciao Mariomodagoldshop, ho aggiunto questi prodotti al carrello:\n\n${productList}`;
+    let total = 0;
+
+
+    cart.forEach(item => {
+
+        total +=
+            item.price *
+            item.quantity;
+
+    });
+
+
+    message +=
+        "\nTotale: " +
+        formatPrice(total);
 
 
     const url =
-        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+        "https://wa.me/" +
+        WHATSAPP_NUMBER +
+        "?text=" +
+        encodeURIComponent(message);
 
 
     window.open(
@@ -1183,51 +1113,9 @@ function checkoutWhatsApp() {
 }
 
 
-/* =====================================================
-   FORMATTA PREZZO
-===================================================== */
-
-function formatPrice(price) {
-
-    return new Intl.NumberFormat(
-        "it-IT",
-        {
-            style: "currency",
-            currency: "EUR",
-
-            minimumFractionDigits: 2,
-
-            maximumFractionDigits: 2
-        }
-    ).format(price);
-
-}
-
-
-/* =====================================================
-   SICUREZZA
-===================================================== */
-
-function escapeAttribute(value) {
-
-    return String(value)
-
-        .replace(
-            /\\/g,
-            "\\\\"
-        )
-
-        .replace(
-            /'/g,
-            "\\'"
-        );
-
-}
-
-
-/* =====================================================
-   SALVA CARRELLO
-===================================================== */
+/* =========================================================
+   SALVATAGGIO CARRELLO
+========================================================= */
 
 function saveCart() {
 
@@ -1239,33 +1127,28 @@ function saveCart() {
 }
 
 
-/* =====================================================
-   CARICA CARRELLO
-===================================================== */
+/* =========================================================
+   CARICAMENTO CARRELLO
+========================================================= */
 
 function loadCart() {
 
-    const saved =
-        localStorage.getItem(
-            "mariomodagoldshop_cart"
-        );
-
-
-    if (!saved) {
-
-        return;
-
-    }
-
-
     try {
 
-        cart =
-            JSON.parse(saved);
+        const saved =
+            localStorage.getItem(
+                "mariomodagoldshop_cart"
+            );
 
-    }
 
-    catch {
+        if (saved) {
+
+            cart =
+                JSON.parse(saved);
+
+        }
+
+    } catch (error) {
 
         cart = [];
 
@@ -1274,12 +1157,19 @@ function loadCart() {
 }
 
 
-/* =====================================================
+/* =========================================================
    AVVIO
-===================================================== */
+========================================================= */
 
-loadCart();
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-updateCartCount();
+        loadCart();
 
-loadProducts();
+        loadProducts();
+
+        renderCart();
+
+    }
+);
