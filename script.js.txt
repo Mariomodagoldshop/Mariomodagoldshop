@@ -1,0 +1,1224 @@
+/* =====================================================
+   MARIOMODAGOLDSHOP
+===================================================== */
+
+
+/* =====================================================
+   CONFIGURAZIONE
+===================================================== */
+
+const GITHUB_USERNAME = "TUO_USERNAME";
+
+const GITHUB_REPOSITORY = "Mariomodagoldshop";
+
+const WHATSAPP_NUMBER = "393510901180";
+
+
+const GITHUB_API =
+    `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPOSITORY}/contents/`;
+
+
+/* =====================================================
+   CATEGORIE
+===================================================== */
+
+const CATEGORIES = {
+
+    scarpe: "SCARPE",
+
+    borsa: "BORSE",
+    borse: "BORSE",
+
+    giubbino: "GIUBBINI",
+    giubbini: "GIUBBINI",
+
+    cintura: "CINTURE",
+    cinture: "CINTURE",
+
+    occhiale: "OCCHIALI",
+    occhiali: "OCCHIALI",
+
+    cappello: "CAPPELLI",
+    cappelli: "CAPPELLI",
+
+    tshirt: "T-SHIRT",
+    tshirts: "T-SHIRT",
+
+    orologio: "OROLOGI",
+    orologi: "OROLOGI"
+};
+
+
+const ALLOWED_EXTENSIONS = [
+    "jpg",
+    "jpeg",
+    "png",
+    "webp",
+    "gif"
+];
+
+
+let products = [];
+
+let cart = [];
+
+let currentCategory = "all";
+
+
+/* =====================================================
+   CARICA PRODOTTI DA GITHUB
+===================================================== */
+
+async function loadProducts() {
+
+    const loading =
+        document.getElementById("loading");
+
+
+    try {
+
+        const response =
+            await fetch(GITHUB_API);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Repository non trovato."
+            );
+
+        }
+
+
+        const files =
+            await response.json();
+
+
+        products = [];
+
+
+        files.forEach(file => {
+
+            if (file.type !== "file") {
+                return;
+            }
+
+
+            const extension =
+                getExtension(file.name);
+
+
+            if (
+                !ALLOWED_EXTENSIONS.includes(
+                    extension
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            const product =
+                parseProduct(file.name);
+
+
+            if (!product) {
+                return;
+            }
+
+
+            product.image =
+                file.download_url;
+
+
+            products.push(product);
+
+        });
+
+
+        products.sort((a, b) => {
+
+            if (
+                a.category !==
+                b.category
+            ) {
+
+                return a.category.localeCompare(
+                    b.category
+                );
+
+            }
+
+
+            return a.number - b.number;
+
+        });
+
+
+        loading.style.display = "none";
+
+
+        renderProducts();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        loading.innerHTML = `
+
+            <strong>
+                IMPOSSIBILE CARICARE I PRODOTTI
+            </strong>
+
+            <br><br>
+
+            Controlla:
+
+            <br>
+
+            • il tuo username GitHub
+
+            <br>
+
+            • il nome del repository
+
+            <br>
+
+            • che il repository sia pubblico
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   ESTENSIONE
+===================================================== */
+
+function getExtension(fileName) {
+
+    return fileName
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+}
+
+
+/* =====================================================
+   INTERPRETAZIONE NOME FILE
+=====================================================
+
+   NORMALE:
+
+   Borsa1330.jpg
+
+   = Borsa #1
+   = 330 €
+
+   SCONTATO:
+
+   Borsa1sconto330220.jpg
+
+   = Borsa #1
+   = prezzo originale 330 €
+   = prezzo finale 220 €
+
+===================================================== */
+
+function parseProduct(fileName) {
+
+    const nameWithoutExtension =
+        fileName.substring(
+            0,
+            fileName.lastIndexOf(".")
+        );
+
+
+    const lowerName =
+        nameWithoutExtension.toLowerCase();
+
+
+    const categoryKeys =
+        Object.keys(CATEGORIES)
+            .sort(
+                (a, b) =>
+                    b.length - a.length
+            );
+
+
+    let categoryKey = null;
+
+
+    for (
+        const key of categoryKeys
+    ) {
+
+        if (
+            lowerName.startsWith(key)
+        ) {
+
+            categoryKey = key;
+
+            break;
+
+        }
+
+    }
+
+
+    if (!categoryKey) {
+        return null;
+    }
+
+
+    const remaining =
+        nameWithoutExtension.substring(
+            categoryKey.length
+        );
+
+
+    /* =========================
+       PRODOTTO SCONTATO
+    ========================== */
+
+    const discountRegex =
+        /^(\d+)sconto(\d+(?:[.,]\d{1,2})?)(\d+(?:[.,]\d{1,2})?)$/i;
+
+
+    const discountMatch =
+        remaining.match(
+            discountRegex
+        );
+
+
+    if (discountMatch) {
+
+        const number =
+            parseInt(
+                discountMatch[1],
+                10
+            );
+
+
+        const originalPrice =
+            parseFloat(
+                discountMatch[2]
+                    .replace(",", ".")
+            );
+
+
+        const discountedPrice =
+            parseFloat(
+                discountMatch[3]
+                    .replace(",", ".")
+            );
+
+
+        if (
+            discountedPrice >=
+            originalPrice
+        ) {
+
+            return null;
+
+        }
+
+
+        return {
+
+            id: fileName,
+
+            number,
+
+            category: categoryKey,
+
+            categoryName:
+                CATEGORIES[categoryKey],
+
+            image: "",
+
+            originalPrice,
+
+            price:
+                discountedPrice,
+
+            discounted: true,
+
+            discount:
+                calculateDiscount(
+                    originalPrice,
+                    discountedPrice
+                )
+
+        };
+
+    }
+
+
+    /* =========================
+       PRODOTTO NORMALE
+    ========================== */
+
+    const normalRegex =
+        /^(\d+)(\d+(?:[.,]\d{1,2})?)$/;
+
+
+    const normalMatch =
+        remaining.match(
+            normalRegex
+        );
+
+
+    if (!normalMatch) {
+        return null;
+    }
+
+
+    const number =
+        parseInt(
+            normalMatch[1],
+            10
+        );
+
+
+    const price =
+        parseFloat(
+            normalMatch[2]
+                .replace(",", ".")
+        );
+
+
+    return {
+
+        id: fileName,
+
+        number,
+
+        category: categoryKey,
+
+        categoryName:
+            CATEGORIES[categoryKey],
+
+        image: "",
+
+        originalPrice: price,
+
+        price,
+
+        discounted: false,
+
+        discount: 0
+
+    };
+
+}
+
+
+/* =====================================================
+   CALCOLO SCONTO
+===================================================== */
+
+function calculateDiscount(
+    originalPrice,
+    discountedPrice
+) {
+
+    return Math.round(
+        (
+            1 -
+            discountedPrice /
+            originalPrice
+        ) * 100
+    );
+
+}
+
+
+/* =====================================================
+   CREA PRODOTTI
+===================================================== */
+
+function renderProducts() {
+
+    const container =
+        document.getElementById(
+            "products"
+        );
+
+
+    const noProducts =
+        document.getElementById(
+            "no-products"
+        );
+
+
+    container.innerHTML = "";
+
+
+    let filteredProducts;
+
+
+    if (
+        currentCategory === "all"
+    ) {
+
+        filteredProducts =
+            products;
+
+    }
+
+    else {
+
+        filteredProducts =
+            products.filter(
+                product =>
+                    product.category ===
+                    currentCategory
+            );
+
+    }
+
+
+    if (
+        filteredProducts.length === 0
+    ) {
+
+        noProducts.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    noProducts.style.display =
+        "none";
+
+
+    filteredProducts.forEach(
+        product => {
+
+            container.appendChild(
+                createProductCard(product)
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   SCHEDA PRODOTTO
+===================================================== */
+
+function createProductCard(product) {
+
+    const card =
+        document.createElement("div");
+
+
+    card.className =
+        "product-card";
+
+
+    const cartItem =
+        cart.find(
+            item =>
+                item.id === product.id
+        );
+
+
+    const quantity =
+        cartItem
+            ? cartItem.quantity
+            : 0;
+
+
+    let priceHTML;
+
+
+    if (product.discounted) {
+
+        priceHTML = `
+
+            <div class="product-old-price">
+                ${formatPrice(
+                    product.originalPrice
+                )}
+            </div>
+
+            <div class="product-price">
+                ${formatPrice(
+                    product.price
+                )}
+            </div>
+
+            <span class="discount-badge">
+                -${product.discount}%
+            </span>
+
+        `;
+
+    }
+
+    else {
+
+        priceHTML = `
+
+            <div class="product-price">
+                ${formatPrice(
+                    product.price
+                )}
+            </div>
+
+        `;
+
+    }
+
+
+    card.innerHTML = `
+
+        <div class="product-image-container">
+
+            <img
+                src="${product.image}"
+                alt="Prodotto"
+                class="product-image"
+                loading="lazy"
+            >
+
+        </div>
+
+
+        <div class="product-info">
+
+            <div class="product-price-area">
+
+                ${priceHTML}
+
+            </div>
+
+
+            <div class="quantity-row">
+
+                <button
+                    class="quantity-button"
+                    onclick="changeQuantity(
+                        '${escapeAttribute(
+                            product.id
+                        )}',
+                        -1
+                    )"
+                >
+                    −
+                </button>
+
+
+                <span class="quantity-value">
+                    ${quantity}
+                </span>
+
+
+                <button
+                    class="quantity-button"
+                    onclick="changeQuantity(
+                        '${escapeAttribute(
+                            product.id
+                        )}',
+                        1
+                    )"
+                >
+                    +
+                </button>
+
+            </div>
+
+
+            <button
+                class="add-cart-button ${
+                    quantity > 0
+                        ? "added"
+                        : ""
+                }"
+                onclick="addToCart(
+                    '${escapeAttribute(
+                        product.id
+                    )}'
+                )"
+            >
+
+                ${
+                    quantity > 0
+                        ? "✓ NEL CARRELLO"
+                        : "AGGIUNGI AL CARRELLO"
+                }
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    return card;
+
+}
+
+
+/* =====================================================
+   AGGIUNGI AL CARRELLO
+===================================================== */
+
+function addToCart(productId) {
+
+    const product =
+        products.find(
+            item =>
+                item.id === productId
+        );
+
+
+    if (!product) {
+        return;
+    }
+
+
+    let cartItem =
+        cart.find(
+            item =>
+                item.id === productId
+        );
+
+
+    if (!cartItem) {
+
+        cartItem = {
+
+            id: product.id,
+
+            number: product.number,
+
+            category:
+                product.categoryName,
+
+            price:
+                product.price,
+
+            originalPrice:
+                product.originalPrice,
+
+            image:
+                product.image,
+
+            quantity: 0
+
+        };
+
+
+        cart.push(cartItem);
+
+    }
+
+
+    cartItem.quantity++;
+
+
+    saveCart();
+
+    updateCartCount();
+
+    renderProducts();
+
+    renderCart();
+
+}
+
+
+/* =====================================================
+   QUANTITÀ
+===================================================== */
+
+function changeQuantity(
+    productId,
+    amount
+) {
+
+    const product =
+        products.find(
+            item =>
+                item.id === productId
+        );
+
+
+    if (!product) {
+        return;
+    }
+
+
+    let cartItem =
+        cart.find(
+            item =>
+                item.id === productId
+        );
+
+
+    if (!cartItem) {
+
+        if (amount <= 0) {
+            return;
+        }
+
+
+        cartItem = {
+
+            id: product.id,
+
+            number: product.number,
+
+            category:
+                product.categoryName,
+
+            price:
+                product.price,
+
+            originalPrice:
+                product.originalPrice,
+
+            image:
+                product.image,
+
+            quantity: 0
+
+        };
+
+
+        cart.push(cartItem);
+
+    }
+
+
+    cartItem.quantity += amount;
+
+
+    if (
+        cartItem.quantity <= 0
+    ) {
+
+        cart =
+            cart.filter(
+                item =>
+                    item.id !== productId
+            );
+
+    }
+
+
+    saveCart();
+
+    updateCartCount();
+
+    renderProducts();
+
+    renderCart();
+
+}
+
+
+/* =====================================================
+   CARRELLO
+===================================================== */
+
+function renderCart() {
+
+    const container =
+        document.getElementById(
+            "cart-items"
+        );
+
+
+    const empty =
+        document.getElementById(
+            "empty-cart"
+        );
+
+
+    const totalElement =
+        document.getElementById(
+            "cart-total"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (cart.length === 0) {
+
+        empty.style.display =
+            "flex";
+
+        totalElement.textContent =
+            "€0,00";
+
+        return;
+
+    }
+
+
+    empty.style.display =
+        "none";
+
+
+    let total = 0;
+
+
+    cart.forEach(item => {
+
+        total +=
+            item.price *
+            item.quantity;
+
+
+        const element =
+            document.createElement(
+                "div"
+            );
+
+
+        element.className =
+            "cart-item";
+
+
+        element.innerHTML = `
+
+            <img
+                src="${item.image}"
+                alt="Prodotto"
+                class="cart-item-image"
+            >
+
+
+            <div class="cart-item-info">
+
+                <div class="cart-item-price">
+                    ${formatPrice(
+                        item.price
+                    )}
+                </div>
+
+
+                <div class="cart-item-quantity">
+                    Quantità:
+                    ${item.quantity}
+                </div>
+
+
+                <button
+                    class="remove-item"
+                    onclick="removeFromCart(
+                        '${escapeAttribute(
+                            item.id
+                        )}'
+                    )"
+                >
+                    RIMUOVI
+                </button>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(
+            element
+        );
+
+    });
+
+
+    totalElement.textContent =
+        formatPrice(total);
+
+}
+
+
+/* =====================================================
+   RIMUOVI
+===================================================== */
+
+function removeFromCart(productId) {
+
+    cart =
+        cart.filter(
+            item =>
+                item.id !== productId
+        );
+
+
+    saveCart();
+
+    updateCartCount();
+
+    renderProducts();
+
+    renderCart();
+
+}
+
+
+/* =====================================================
+   CONTEGGIO
+===================================================== */
+
+function updateCartCount() {
+
+    const count =
+        cart.reduce(
+            (total, item) =>
+                total + item.quantity,
+            0
+        );
+
+
+    document.getElementById(
+        "cart-count"
+    ).textContent = count;
+
+}
+
+
+/* =====================================================
+   APRI CARRELLO
+===================================================== */
+
+function openCart() {
+
+    document
+        .getElementById(
+            "cart-overlay"
+        )
+        .classList.add("open");
+
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    renderCart();
+
+}
+
+
+/* =====================================================
+   CHIUDI CARRELLO
+===================================================== */
+
+function closeCart() {
+
+    document
+        .getElementById(
+            "cart-overlay"
+        )
+        .classList.remove("open");
+
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+/* =====================================================
+   CHIUSURA ESTERNA
+===================================================== */
+
+function closeCartOutside(event) {
+
+    if (
+        event.target.id ===
+        "cart-overlay"
+    ) {
+
+        closeCart();
+
+    }
+
+}
+
+
+/* =====================================================
+   CATEGORIE
+===================================================== */
+
+function filterCategory(
+    category,
+    button
+) {
+
+    currentCategory =
+        category;
+
+
+    document
+        .querySelectorAll(
+            ".category-button"
+        )
+        .forEach(
+            btn =>
+                btn.classList.remove(
+                    "active"
+                )
+        );
+
+
+    button.classList.add(
+        "active"
+    );
+
+
+    renderProducts();
+
+}
+
+
+/* =====================================================
+   WHATSAPP
+===================================================== */
+
+function checkoutWhatsApp() {
+
+    if (cart.length === 0) {
+
+        alert(
+            "IL CARRELLO È VUOTO."
+        );
+
+        return;
+
+    }
+
+
+    let productList = "";
+
+
+    cart.forEach(item => {
+
+        productList +=
+            `- ${item.category} #${item.number} x${item.quantity} — ${formatPrice(item.price)}\n`;
+
+    });
+
+
+    const message =
+        `Ciao Mariomodagoldshop, ho aggiunto questi prodotti al carrello:\n\n${productList}`;
+
+
+    const url =
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+}
+
+
+/* =====================================================
+   PREZZO
+===================================================== */
+
+function formatPrice(price) {
+
+    return new Intl.NumberFormat(
+        "it-IT",
+        {
+            style: "currency",
+            currency: "EUR",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    ).format(price);
+
+}
+
+
+/* =====================================================
+   SICUREZZA
+===================================================== */
+
+function escapeAttribute(value) {
+
+    return String(value)
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /'/g,
+            "\\'"
+        );
+
+}
+
+
+/* =====================================================
+   LOCAL STORAGE
+===================================================== */
+
+function saveCart() {
+
+    localStorage.setItem(
+        "mariomodagoldshop_cart",
+        JSON.stringify(cart)
+    );
+
+}
+
+
+function loadCart() {
+
+    const saved =
+        localStorage.getItem(
+            "mariomodagoldshop_cart"
+        );
+
+
+    if (!saved) {
+        return;
+    }
+
+
+    try {
+
+        cart =
+            JSON.parse(saved);
+
+    }
+
+    catch {
+
+        cart = [];
+
+    }
+
+}
+
+
+/* =====================================================
+   AVVIO
+===================================================== */
+
+loadCart();
+
+updateCartCount();
+
+loadProducts();

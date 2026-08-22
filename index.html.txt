@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MARIOMODAGOLDSHOP</title>
+
+    <meta
+        name="description"
+        content="MARIOMODAGOLDSHOP - Moda, stile ed eleganza."
+    >
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- BANNER SPEDIZIONE -->
+    <div class="shipping-banner">
+        🚚 SPEDIZIONE GARANTITA ENTRO 48 ORE
+    </div>
+
+
+    <!-- HEADER -->
+    <header class="header">
+
+        <div class="logo-3d">
+            MARIOMODAGOLDSHOP
+        </div>
+
+        <button
+            class="cart-button"
+            onclick="openCart()"
+            aria-label="Apri carrello"
+        >
+            <span class="cart-icon">🛒</span>
+
+            <span class="cart-text">
+                CARRELLO
+            </span>
+
+            <span
+                id="cart-count"
+                class="cart-count"
+            >
+                0
+            </span>
+        </button>
+
+    </header>
+
+
+    <!-- HERO -->
+    <section class="hero">
+
+        <div class="hero-logo">
+            MARIOMODAGOLDSHOP
+        </div>
+
+        <p>
+            MODA • STILE • ELEGANZA
+        </p>
+
+    </section>
+
+
+    <!-- CATEGORIE -->
+    <nav class="categories">
+
+        <button
+            class="category-button active"
+            onclick="filterCategory('all', this)"
+        >
+            TUTTI
+        </button>
+
+        <button
+            class="category-button"
+            onclick="filterCategory('scarpe', this)"
+        >
+            SCARPE
+        </button>
+
+        <button
+            class="category-button"
+            onclick="filterCategory('borsa', this)"
+        >
+            BORSE
+        </button>
+
+        <button
+            class="category-button"
+            onclick="filterCategory('giubbino', this)"
+        >
+            GIUBBINI
+        </button>
+
+        <button
+            class="category-button"
+            onclick="filterCategory('cintura', this)"
+        >
+            CINTURE
+        </button>
+
+        <button
+            class="category-button"
+            onclick="filterCategory('occhiale', this)"
+        >
+            OCCHIALI
+        </button>
+
+        <button
+            class="category-button"
+            onclick="filterCategory('cappello', this)"
+        >
+            CAPPELLI
+        </button>
+
+        <button
+            class="category-button"
+            onclick="filterCategory('tshirt', this)"
+        >
+            T-SHIRT
+        </button>
+
+        <button
+            class="category-button"
+            onclick="filterCategory('orologio', this)"
+        >
+            OROLOGI
+        </button>
+
+    </nav>
+
+
+    <!-- PRODOTTI -->
+    <main>
+
+        <div
+            id="loading"
+            class="loading"
+        >
+            CARICAMENTO PRODOTTI...
+        </div>
+
+        <div
+            id="products"
+            class="products-grid"
+        ></div>
+
+        <div
+            id="no-products"
+            class="no-products"
+        >
+            NESSUN PRODOTTO DISPONIBILE.
+        </div>
+
+    </main>
+
+
+    <!-- CARRELLO -->
+    <div
+        id="cart-overlay"
+        class="cart-overlay"
+        onclick="closeCartOutside(event)"
+    >
+
+        <div
+            class="cart"
+            onclick="event.stopPropagation()"
+        >
+
+            <div class="cart-header">
+
+                <h2>
+                    IL TUO CARRELLO
+                </h2>
+
+                <button
+                    class="close-cart"
+                    onclick="closeCart()"
+                    aria-label="Chiudi carrello"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div
+                id="cart-items"
+                class="cart-items"
+            ></div>
+
+
+            <div
+                id="empty-cart"
+                class="empty-cart"
+            >
+
+                <div class="empty-cart-icon">
+                    🛒
+                </div>
+
+                <p>
+                    IL CARRELLO È VUOTO
+                </p>
+
+            </div>
+
+
+            <div class="cart-footer">
+
+                <div class="cart-total">
+
+                    <span>
+                        TOTALE
+                    </span>
+
+                    <strong id="cart-total">
+                        €0,00
+                    </strong>
+
+                </div>
+
+                <button
+                    class="checkout-button"
+                    onclick="checkoutWhatsApp()"
+                >
+                    CHECKOUT SU WHATSAPP
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <strong>
+            MARIOMODAGOLDSHOP
+        </strong>
+
+        <p>
+            SPEDIZIONE GARANTITA ENTRO 48 ORE
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
