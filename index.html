@@ -11,7 +11,8 @@
   <div class="top-banner">SPEDIZIONE GARANTITA ENTRO 48 ORE</div>
 
   <header class="header">
-    <button class="icon-btn" id="menuBtn" aria-label="Apri menu"><span></span><span></span><span></span></button>
+    <input class="menu-toggle" id="menuToggle" type="checkbox" aria-label="Apri menu">
+<label class="icon-btn hamburger" for="menuToggle" aria-label="Apri menu"><span></span><span></span><span></span></label>
     <a class="logo-wrap" href="#home" aria-label="MARIOMODAGOLDSHOP"><img src="logo.jpeg" alt="MARIOMODAGOLDSHOP"></a>
     <div class="header-actions">
       <button class="icon-btn search-btn" id="searchBtn" aria-label="Cerca">⌕</button>
@@ -19,8 +20,8 @@
     </div>
   </header>
 
-  <aside class="menu-overlay" id="drawer" aria-hidden="true">
-    <div class="menu-top"><span>MENU</span><button id="closeMenu" aria-label="Chiudi menu">×</button></div>
+  <aside class="menu-overlay" id="drawer">
+    <div class="menu-top"><span>MENU</span><label class="menu-close" for="menuToggle" aria-label="Chiudi menu">×</label></div>
     <nav>
       <a href="#home">Home</a>
       <a href="#catalogo">Catalogo</a>
@@ -29,7 +30,7 @@
       <a href="#recensioni">Recensioni</a>
     </nav>
   </aside>
-  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <label class="menu-backdrop" for="menuToggle"></label>
   <main id="home">
     <section class="hero">
       <div class="hero-copy">
