@@ -19,7 +19,8 @@
     </div>
   </header>
 
-  <div class="menu-dropdown" id="drawer">
+  <aside class="menu-overlay" id="drawer" aria-hidden="true">
+    <div class="menu-top"><span>MENU</span><button id="closeMenu" aria-label="Chiudi menu">×</button></div>
     <nav>
       <a href="#home">Home</a>
       <a href="#catalogo">Catalogo</a>
@@ -27,8 +28,8 @@
       <a href="#richiedi">Richiedi</a>
       <a href="#recensioni">Recensioni</a>
     </nav>
-  </div>
-
+  </aside>
+  <div class="menu-backdrop" id="menuBackdrop"></div>
   <main id="home">
     <section class="hero">
       <div class="hero-copy">

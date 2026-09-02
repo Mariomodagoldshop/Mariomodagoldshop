@@ -147,11 +147,13 @@ function requestProduct(){
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Ciao Mariomodagoldshop, vorrei richiedere questo prodotto che non trovo nel catalogo: "+text)}`,"_blank");
 }
 
-$("#menuBtn").onclick=()=>$("#drawer").classList.toggle("open");
-document.addEventListener("click",e=>{
-  if(!e.target.closest("#menuBtn")&&!e.target.closest("#drawer")) $("#drawer").classList.remove("open");
-});
-$("#drawer").querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>$("#drawer").classList.remove("open")));
+const menu=$("#drawer"), backdrop=$("#menuBackdrop");
+function closeMenu(){menu.classList.remove("open");backdrop.classList.remove("show");menu.setAttribute("aria-hidden","true")}
+$("#menuBtn").onclick=()=>{menu.classList.add("open");backdrop.classList.add("show");menu.setAttribute("aria-hidden","false")};
+$("#closeMenu").onclick=closeMenu;
+$("#menuBackdrop").onclick=closeMenu;
+menu.querySelectorAll("a").forEach(a=>a.addEventListener("click",closeMenu));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu()});
 $("#searchBtn").onclick=()=>{$("#searchPanel").classList.add("open");$("#searchInput").focus()};
 $("#closeSearch").onclick=()=>$("#searchPanel").classList.remove("open");
 $("#applySearch").onclick=applySearch;
