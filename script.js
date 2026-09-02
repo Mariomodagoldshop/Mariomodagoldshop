@@ -58,7 +58,7 @@ function productCard(p){
   const t=$("#productTemplate").content.cloneNode(true);
   const card=t.querySelector(".product-card");
   const img=t.querySelector(".product-image");
-  img.src=p.foto||"prodotti.jpeg"; img.alt=p.nome;
+  img.src=p.foto ? new URL(p.foto, document.baseURI).href : "prodotti.jpeg"; img.alt=p.nome;
   t.querySelector(".product-name").textContent=p.nome;
   t.querySelector(".product-details").textContent=[p.marca,p.taglia,p.colore].filter(Boolean).join(" • ");
   const price=productPrice(p), promo=Number(p.prezzoPromo)>0&&Number(p.prezzoPromo)<Number(p.prezzo);
@@ -147,9 +147,11 @@ function requestProduct(){
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Ciao Mariomodagoldshop, vorrei richiedere questo prodotto che non trovo nel catalogo: "+text)}`,"_blank");
 }
 
-$("#menuBtn").onclick=()=>{$("#drawer").classList.add("open");$("#overlay").classList.add("show")};
-$("#closeMenu").onclick=()=>{$("#drawer").classList.remove("open");$("#overlay").classList.remove("show")};
-$("#overlay").onclick=()=>$("#closeMenu").click();
+$("#menuBtn").onclick=()=>$("#drawer").classList.toggle("open");
+document.addEventListener("click",e=>{
+  if(!e.target.closest("#menuBtn")&&!e.target.closest("#drawer")) $("#drawer").classList.remove("open");
+});
+$("#drawer").querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>$("#drawer").classList.remove("open")));
 $("#searchBtn").onclick=()=>{$("#searchPanel").classList.add("open");$("#searchInput").focus()};
 $("#closeSearch").onclick=()=>$("#searchPanel").classList.remove("open");
 $("#applySearch").onclick=applySearch;
