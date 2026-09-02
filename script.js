@@ -1,1370 +1,165 @@
-/* =========================================================
-   MARIOMODAGOLDSHOP
-   JAVASCRIPT DEFINITIVO
-========================================================= */
+const WHATSAPP_NUMBER="393510901180";
+const SHEET_API_URL="INCOLLA_QUI_URL_APPS_SCRIPT";
 
-const WHATSAPP_NUMBER = "393510901180";
+const CATEGORIES=["Scarpe","Borse","Giubbini","Cinture","Occhiali","Cappelli","T-shirt","Orologi"];
+const FALLBACK_PRODUCTS=[];
 
-const GITHUB_OWNER = "mariomodagoldshop";
-const GITHUB_REPOSITORY = "Mariomodagoldshop";
+let products=[];
+let cart=JSON.parse(localStorage.getItem("mmgs_cart")||"[]");
+let activeCategory="";
 
-const GITHUB_API =
-    `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPOSITORY}/contents/`;
+const $=s=>document.querySelector(s);
+const money=n=>new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(Number(n)||0);
 
-const categories = [
-    "scarpe",
-    "borsa",
-    "giubbino",
-    "cintura",
-    "occhiale",
-    "cappello",
-    "tshirt",
-    "orologio"
-];
+function normalize(v){return String(v??"").trim()}
+function validProduct(p){return p && p.nome && Number(p.prezzo)>0}
+function productPrice(p){return Number(p.prezzoPromo)>0 && Number(p.prezzoPromo)<Number(p.prezzo)?Number(p.prezzoPromo):Number(p.prezzo)}
+function isAvailable(p){return normalize(p.disponibile).toUpperCase()!=="NO"}
 
-const imageExtensions = [
-    "jpg",
-    "jpeg",
-    "png",
-    "webp",
-    "gif",
-    "avif"
-];
-
-let products = [];
-let cart = [];
-let currentCategory = "all";
-
-
-/* =========================================================
-   ELEMENTI HTML
-========================================================= */
-
-const productsContainer =
-    document.getElementById("products");
-
-const loading =
-    document.getElementById("loading");
-
-const noProducts =
-    document.getElementById("no-products");
-
-const cartOverlay =
-    document.getElementById("cart-overlay");
-
-const cartItemsContainer =
-    document.getElementById("cart-items");
-
-const emptyCart =
-    document.getElementById("empty-cart");
-
-const cartTotal =
-    document.getElementById("cart-total");
-
-const cartCount =
-    document.getElementById("cart-count");
-
-
-/* =========================================================
-   PREZZO
-========================================================= */
-
-function formatPrice(price) {
-
-    return new Intl.NumberFormat("it-IT", {
-        style: "currency",
-        currency: "EUR"
-    }).format(price);
-
+async function loadProducts(){
+  if(!SHEET_API_URL || SHEET_API_URL.includes("INCOLLA_QUI")){
+    products=FALLBACK_PRODUCTS;
+  }else{
+    try{
+      const r=await fetch(SHEET_API_URL,{cache:"no-store"});
+      const data=await r.json();
+      products=(Array.isArray(data)?data:data.products||[]).map(p=>({
+        nome:normalize(p["Nome prodotto"]??p.nome),
+        foto:normalize(p.Foto??p.foto),
+        categoria:normalize(p.Categoria??p.categoria),
+        marca:normalize(p.Marca??p.marca),
+        taglia:normalize(p.Taglia??p.taglia),
+        colore:normalize(p.Colore??p.colore),
+        prezzo:Number(String(p.Prezzo??p.prezzo).replace(",", ".")),
+        prezzoPromo:Number(String(p["Prezzo promo"]??p.prezzoPromo??"").replace(",", ".")),
+        disponibile:normalize(p.Disponibile??p.disponibile||"SI"),
+        nuovo:normalize(p.Nuovo??p.nuovo||"NO"),
+        id:p.ID??p.id??crypto.randomUUID()
+      })).filter(validProduct);
+    }catch(e){console.error(e);products=FALLBACK_PRODUCTS}
+  }
+  buildFilters(); renderAll();
 }
 
-
-/* =========================================================
-   CONTROLLO IMMAGINE
-========================================================= */
-
-function isImageFile(filename) {
-
-    const extension =
-        filename
-            .split(".")
-            .pop()
-            .toLowerCase();
-
-    return imageExtensions.includes(extension);
-
+function buildFilters(){
+  const cats=[...new Set(products.map(p=>p.categoria).filter(Boolean))];
+  const sizes=[...new Set(products.map(p=>p.taglia).filter(Boolean))];
+  const colors=[...new Set(products.map(p=>p.colore).filter(Boolean))];
+  const fill=(sel,arr,label)=>{const el=$(sel); if(!el)return; el.innerHTML=`<option value="">${label}</option>`+arr.sort().map(x=>`<option>${escapeHtml(x)}</option>`).join("")};
+  fill("#filterCategory",cats,"Categoria"); fill("#filterSize",sizes,"Taglia"); fill("#filterColor",colors,"Colore");
+  $("#categories").innerHTML=`<button class="category-btn active" data-cat="">Tutti</button>`+CATEGORIES.map(c=>`<button class="category-btn" data-cat="${escapeAttr(c)}">${escapeHtml(c)}</button>`).join("");
+  $("#categories").onclick=e=>{const b=e.target.closest("[data-cat]");if(!b)return;activeCategory=b.dataset.cat;document.querySelectorAll(".category-btn").forEach(x=>x.classList.toggle("active",x===b));renderCatalog()};
 }
 
-
-/* =========================================================
-   PARSER DEI NOMI
-=========================================================
-
-   FORMATO NORMALE:
-
-   Scarpe1o170.jpg
-   Scarpe10o170.jpg
-   Orologio7o120.jpg
-
-   FORMATO SCONTATO:
-
-   Orologio7o120sconto100.jpg
-   Borsa10o500sconto350.jpg
-
-========================================================= */
-
-function parseProductFilename(filename) {
-
-    if (!filename || !isImageFile(filename)) {
-        return null;
-    }
-
-    const name = filename
-        .replace(/\.[^/.]+$/, "")
-        .toLowerCase()
-        .trim();
-
-
-    /* =====================================================
-       TROVA CATEGORIA
-    ====================================================== */
-
-    let category = null;
-
-    for (const cat of categories) {
-
-        if (name.startsWith(cat)) {
-
-            category = cat;
-            break;
-
-        }
-
-    }
-
-    if (!category) {
-        return null;
-    }
-
-
-    /* =====================================================
-       PRODOTTO SCONTATO
-       
-       Esempio:
-
-       Orologio7o120sconto100
-
-       articolo = 7
-       prezzo originale = 120
-       prezzo finale = 100
-    ====================================================== */
-
-    const discountRegex = new RegExp(
-        "^" +
-        category +
-        "(\\d+)" +
-        "o" +
-        "(\\d+(?:[.,]\\d+)?)" +
-        "sconto" +
-        "(\\d+(?:[.,]\\d+)?)$"
-    );
-
-    const discountMatch =
-        name.match(discountRegex);
-
-
-    if (discountMatch) {
-
-        const number =
-            discountMatch[1];
-
-        const oldPrice =
-            parseFloat(
-                discountMatch[2]
-                    .replace(",", ".")
-            );
-
-        const newPrice =
-            parseFloat(
-                discountMatch[3]
-                    .replace(",", ".")
-            );
-
-
-        /*
-           Evita prodotti con prezzi
-           non validi o pari a 0.
-        */
-
-        if (
-            !Number.isFinite(oldPrice) ||
-            !Number.isFinite(newPrice) ||
-            oldPrice <= 0 ||
-            newPrice <= 0 ||
-            newPrice >= oldPrice
-        ) {
-
-            return null;
-
-        }
-
-
-        return {
-
-            id: filename,
-
-            filename: filename,
-
-            category: category,
-
-            number: number,
-
-            price: newPrice,
-
-            oldPrice: oldPrice,
-
-            discounted: true,
-
-            imageUrl: null
-
-        };
-
-    }
-
-
-    /* =====================================================
-       PRODOTTO NORMALE
-       
-       Esempio:
-
-       Orologio7o120
-
-       articolo = 7
-       prezzo = 120
-    ====================================================== */
-
-    const normalRegex = new RegExp(
-        "^" +
-        category +
-        "(\\d+)" +
-        "o" +
-        "(\\d+(?:[.,]\\d+)?)$"
-    );
-
-    const normalMatch =
-        name.match(normalRegex);
-
-
-    if (!normalMatch) {
-        return null;
-    }
-
-
-    const number =
-        normalMatch[1];
-
-    const price =
-        parseFloat(
-            normalMatch[2]
-                .replace(",", ".")
-        );
-
-
-    /*
-       Mai creare prodotti da 0 €.
-    */
-
-    if (
-        !Number.isFinite(price) ||
-        price <= 0
-    ) {
-
-        return null;
-
-    }
-
-
-    return {
-
-        id: filename,
-
-        filename: filename,
-
-        category: category,
-
-        number: number,
-
-        price: price,
-
-        oldPrice: null,
-
-        discounted: false,
-
-        imageUrl: null
-
-    };
-
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function escapeAttr(s){return escapeHtml(s)}
+
+function productCard(p){
+  const t=$("#productTemplate").content.cloneNode(true);
+  const card=t.querySelector(".product-card");
+  const img=t.querySelector(".product-image");
+  img.src=p.foto||"prodotti.jpeg"; img.alt=p.nome;
+  t.querySelector(".product-name").textContent=p.nome;
+  t.querySelector(".product-details").textContent=[p.marca,p.taglia,p.colore].filter(Boolean).join(" • ");
+  const price=productPrice(p), promo=Number(p.prezzoPromo)>0&&Number(p.prezzoPromo)<Number(p.prezzo);
+  t.querySelector(".price").textContent=money(price);
+  t.querySelector(".old-price").textContent=promo?money(p.prezzo):"";
+  t.querySelector(".promo-badge").style.display=promo?"block":"none";
+  if(!isAvailable(p))card.classList.add("sold");
+  let q=1;t.querySelector(".qty").textContent=q;
+  t.querySelector(".minus").onclick=()=>{q=Math.max(1,q-1);t.querySelector(".qty").textContent=q};
+  t.querySelector(".plus").onclick=()=>{q++;t.querySelector(".qty").textContent=q};
+  t.querySelector(".add").onclick=()=>addToCart(p,q);
+  return t;
 }
 
-
-/* =========================================================
-   CARICA AUTOMATICAMENTE LE FOTO DA GITHUB
-========================================================= */
-
-async function loadProducts() {
-
-    products = [];
-
-    try {
-
-        const response =
-            await fetch(
-                GITHUB_API +
-                "?t=" +
-                Date.now()
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Errore nella connessione a GitHub."
-            );
-
-        }
-
-
-        const files =
-            await response.json();
-
-
-        /*
-           GitHub restituisce tutti i file
-           presenti nella root.
-        */
-
-        files.forEach(file => {
-
-            /*
-               Ignora cartelle e file non immagine.
-            */
-
-            if (
-                file.type !== "file" ||
-                !isImageFile(file.name)
-            ) {
-
-                return;
-
-            }
-
-
-            const product =
-                parseProductFilename(
-                    file.name
-                );
-
-
-            /*
-               Se il nome non rispetta
-               il formato corretto,
-               il file viene ignorato.
-            */
-
-            if (!product) {
-
-                return;
-
-            }
-
-
-            /*
-               URL diretto dell'immagine.
-            */
-
-            product.imageUrl =
-                file.download_url;
-
-
-            products.push(product);
-
-        });
-
-
-        /* =================================================
-           ORDINA I PRODOTTI
-        ================================================= */
-
-        products.sort(
-            (a, b) => {
-
-                /*
-                   Prima categoria.
-                */
-
-                const categoryCompare =
-                    a.category.localeCompare(
-                        b.category
-                    );
-
-
-                if (
-                    categoryCompare !== 0
-                ) {
-
-                    return categoryCompare;
-
-                }
-
-
-                /*
-                   Poi numero articolo.
-
-                   1
-                   2
-                   3
-                   ...
-                   10
-                   11
-                   12
-                */
-
-                return (
-                    Number(a.number) -
-                    Number(b.number)
-                );
-
-            }
-        );
-
-
-        loading.style.display =
-            "none";
-
-
-        renderProducts();
-
-
-    } catch (error) {
-
-        console.error(
-            "Errore caricamento prodotti:",
-            error
-        );
-
-
-        products = [];
-
-
-        loading.style.display =
-            "none";
-
-
-        productsContainer.innerHTML =
-            "";
-
-
-        noProducts.style.display =
-            "block";
-
-
-        noProducts.textContent =
-            "NESSUN PRODOTTO DISPONIBILE.";
-
-    }
-
+function renderGrid(id,list){
+  const el=$(id);el.innerHTML="";
+  if(!list.length){el.innerHTML='<div class="empty">Nessun prodotto disponibile.</div>';return}
+  list.forEach(p=>el.appendChild(productCard(p)));
+}
+function renderAll(){
+  const offers=products.filter(p=>Number(p.prezzoPromo)>0&&Number(p.prezzoPromo)<Number(p.prezzo)).slice(0,3);
+  const news=products.filter(p=>normalize(p.nuovo).toUpperCase()==="SI").slice(0,8);
+  renderGrid("#offersGrid",offers);renderGrid("#newGrid",news);renderCatalog();renderVideos();renderReviews();updateCart();
+}
+function renderCatalog(){
+  let list=products.filter(p=>!activeCategory||p.categoria.toLowerCase()===activeCategory.toLowerCase());
+  const sort=$("#sortSelect").value;
+  list=[...list].sort((a,b)=>sort==="asc"?productPrice(a)-productPrice(b):sort==="desc"?productPrice(b)-productPrice(a):Number(b.id)-Number(a.id));
+  renderGrid("#catalogGrid",list);$("#resultCount").textContent=`${list.length} prodotti`;
+}
+function applySearch(){
+  const q=normalize($("#searchInput").value).toLowerCase();
+  const cat=normalize($("#filterCategory").value).toLowerCase(),size=normalize($("#filterSize").value).toLowerCase(),color=normalize($("#filterColor").value).toLowerCase(),av=$("#filterAvailability").value;
+  const min=Number($("#minPrice").value)||0,max=Number($("#maxPrice").value)||Infinity;
+  const promo=$("#promoOnly").checked,newOnly=$("#newOnly").checked;
+  let list=products.filter(p=>
+    (!q||p.nome.toLowerCase().includes(q))&&
+    (!cat||p.categoria.toLowerCase()===cat)&&(!size||p.taglia.toLowerCase()===size)&&(!color||p.colore.toLowerCase()===color)&&
+    (!av||normalize(p.disponibile).toUpperCase()===av)&&productPrice(p)>=min&&productPrice(p)<=max&&
+    (!promo||Number(p.prezzoPromo)>0&&Number(p.prezzoPromo)<Number(p.prezzo))&&(!newOnly||normalize(p.nuovo).toUpperCase()==="SI")
+  );
+  activeCategory="";document.querySelectorAll(".category-btn").forEach(x=>x.classList.remove("active"));
+  renderGrid("#catalogGrid",list);$("#resultCount").textContent=`${list.length} risultati`;
+  $("#searchPanel").classList.remove("open");location.hash="catalogo";
+}
+function addToCart(p,q){
+  if(!isAvailable(p))return;
+  const key=String(p.id||p.nome);
+  const existing=cart.find(x=>String(x.id)===key);
+  if(existing)existing.qty+=q;else cart.push({id:key,nome:p.nome,prezzo:productPrice(p),qty:q,foto:p.foto||"prodotti.jpeg"});
+  saveCart();openCart();
+}
+function saveCart(){localStorage.setItem("mmgs_cart",JSON.stringify(cart));updateCart()}
+function updateCart(){
+  $("#cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0);
+  const el=$("#cartItems");el.innerHTML="";
+  if(!cart.length){el.innerHTML='<div class="empty">Il carrello è vuoto.</div>';$("#cartTotal").textContent=money(0);return}
+  cart.forEach((x,i)=>{
+    const d=document.createElement("div");d.className="cart-item";d.innerHTML=`<img src="${escapeAttr(x.foto)}"><div><strong>${escapeHtml(x.nome)}</strong><br><small>${money(x.prezzo)} × ${x.qty}</small></div><div class="cart-qty"><button data-i="${i}" data-d="-1">−</button> ${x.qty} <button data-i="${i}" data-d="1">+</button></div>`;
+    el.appendChild(d);
+  });
+  el.onclick=e=>{const b=e.target.closest("button[data-i]");if(!b)return;const i=Number(b.dataset.i);cart[i].qty+=Number(b.dataset.d);if(cart[i].qty<=0)cart.splice(i,1);saveCart()};
+  $("#cartTotal").textContent=money(cart.reduce((s,x)=>s+x.prezzo*x.qty,0));
+}
+function checkout(){
+  if(!cart.length)return;
+  const lines=cart.map(x=>`• ${x.nome} — quantità ${x.qty} — ${money(x.prezzo*x.qty)}`).join("\n");
+  const total=cart.reduce((s,x)=>s+x.prezzo*x.qty,0);
+  const msg=`Ciao Mariomodagoldshop, ho aggiunto questi prodotti al carrello:\n${lines}\n\nTotale: ${money(total)}`;
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,"_blank");
+}
+function renderVideos(){
+  const el=$("#videos");el.innerHTML="";
+  let i=1;
+  const add=src=>{const v=document.createElement("video");v.src=src;v.autoplay=true;v.muted=true;v.loop=true;v.playsInline=true;v.controls=true;el.appendChild(v)};
+  add("video.mp4");
+  for(i=2;i<=8;i++) add(`video${i}.mp4`);
+  [...el.children].forEach((v,i)=>{v.addEventListener("error",()=>v.remove())});
+}
+function renderReviews(){
+  const el=$("#reviewsGrid");el.innerHTML="";
+  for(let i=1;i<=30;i++){const img=new Image();img.src=`Recensioni${i}.jpg`;img.alt=`Recensione ${i}`;img.onload=()=>el.appendChild(img);img.onerror=()=>{}}
+}
+function requestProduct(){
+  const text=normalize($("#requestProduct").value);if(!text){alert("Scrivi il prodotto che stai cercando.");return}
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Ciao Mariomodagoldshop, vorrei richiedere questo prodotto che non trovo nel catalogo: "+text)}`,"_blank");
 }
 
-
-/* =========================================================
-   CREA CARD PRODOTTO
-========================================================= */
-
-function createProductCard(product) {
-
-    const card =
-        document.createElement("article");
-
-    card.className =
-        "product-card";
-
-    card.dataset.category =
-        product.category;
-
-
-    /* =====================================================
-       IMMAGINE
-    ====================================================== */
-
-    const imageContainer =
-        document.createElement("div");
-
-    imageContainer.className =
-        "product-image-container";
-
-
-    const image =
-        document.createElement("img");
-
-    image.className =
-        "product-image";
-
-    image.src =
-        product.imageUrl;
-
-    image.alt =
-        "Prodotto MARIOMODAGOLDSHOP";
-
-    image.loading =
-        "lazy";
-
-
-    imageContainer.appendChild(
-        image
-    );
-
-
-    /* =====================================================
-       INFORMAZIONI
-    ====================================================== */
-
-    const info =
-        document.createElement("div");
-
-    info.className =
-        "product-info";
-
-
-    /* =====================================================
-       PREZZO
-    ====================================================== */
-
-    const priceArea =
-        document.createElement("div");
-
-    priceArea.className =
-        "product-price-area";
-
-
-    if (product.discounted) {
-
-        const oldPrice =
-            document.createElement("span");
-
-        oldPrice.className =
-            "product-old-price";
-
-        oldPrice.textContent =
-            formatPrice(
-                product.oldPrice
-            );
-
-
-        const newPrice =
-            document.createElement("span");
-
-        newPrice.className =
-            "product-price";
-
-        newPrice.textContent =
-            formatPrice(
-                product.price
-            );
-
-
-        const badge =
-            document.createElement("span");
-
-        badge.className =
-            "discount-badge";
-
-        badge.textContent =
-            "PROMO";
-
-
-        priceArea.appendChild(
-            oldPrice
-        );
-
-        priceArea.appendChild(
-            newPrice
-        );
-
-        priceArea.appendChild(
-            badge
-        );
-
-    } else {
-
-        const price =
-            document.createElement("span");
-
-        price.className =
-            "product-price";
-
-        price.textContent =
-            formatPrice(
-                product.price
-            );
-
-
-        priceArea.appendChild(
-            price
-        );
-
-    }
-
-
-    /* =====================================================
-       QUANTITÀ
-    ====================================================== */
-
-    const quantityRow =
-        document.createElement("div");
-
-    quantityRow.className =
-        "quantity-row";
-
-
-    const minus =
-        document.createElement("button");
-
-    minus.className =
-        "quantity-button";
-
-    minus.textContent =
-        "−";
-
-
-    const quantity =
-        document.createElement("span");
-
-    quantity.className =
-        "quantity-value";
-
-    quantity.textContent =
-        "1";
-
-
-    const plus =
-        document.createElement("button");
-
-    plus.className =
-        "quantity-button";
-
-    plus.textContent =
-        "+";
-
-
-    let quantityValue = 1;
-
-
-    minus.addEventListener(
-        "click",
-        () => {
-
-            if (
-                quantityValue > 1
-            ) {
-
-                quantityValue--;
-
-                quantity.textContent =
-                    quantityValue;
-
-            }
-
-        }
-    );
-
-
-    plus.addEventListener(
-        "click",
-        () => {
-
-            quantityValue++;
-
-            quantity.textContent =
-                quantityValue;
-
-        }
-    );
-
-
-    quantityRow.appendChild(
-        minus
-    );
-
-    quantityRow.appendChild(
-        quantity
-    );
-
-    quantityRow.appendChild(
-        plus
-    );
-
-
-    /* =====================================================
-       AGGIUNGI AL CARRELLO
-    ====================================================== */
-
-    const addButton =
-        document.createElement("button");
-
-    addButton.className =
-        "add-cart-button";
-
-    addButton.textContent =
-        "AGGIUNGI AL CARRELLO";
-
-
-    addButton.addEventListener(
-        "click",
-        () => {
-
-            addToCart(
-                product,
-                quantityValue
-            );
-
-
-            addButton.textContent =
-                "AGGIUNTO ✓";
-
-
-            addButton.classList.add(
-                "added"
-            );
-
-
-            setTimeout(
-                () => {
-
-                    addButton.textContent =
-                        "AGGIUNGI AL CARRELLO";
-
-                    addButton.classList.remove(
-                        "added"
-                    );
-
-                },
-                1000
-            );
-
-        }
-    );
-
-
-    info.appendChild(
-        priceArea
-    );
-
-    info.appendChild(
-        quantityRow
-    );
-
-    info.appendChild(
-        addButton
-    );
-
-
-    card.appendChild(
-        imageContainer
-    );
-
-    card.appendChild(
-        info
-    );
-
-
-    return card;
-
-}
-
-
-/* =========================================================
-   MOSTRA PRODOTTI
-========================================================= */
-
-function renderProducts() {
-
-    productsContainer.innerHTML =
-        "";
-
-
-    const filteredProducts =
-        currentCategory === "all"
-
-            ? products
-
-            : products.filter(
-                product =>
-                    product.category ===
-                    currentCategory
-            );
-
-
-    if (
-        filteredProducts.length === 0
-    ) {
-
-        noProducts.style.display =
-            "block";
-
-        return;
-
-    }
-
-
-    noProducts.style.display =
-        "none";
-
-
-    filteredProducts.forEach(
-        product => {
-
-            productsContainer.appendChild(
-                createProductCard(
-                    product
-                )
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   FILTRO CATEGORIA
-========================================================= */
-
-function filterCategory(
-    category,
-    button
-) {
-
-    currentCategory =
-        category;
-
-
-    document
-        .querySelectorAll(
-            ".category-button"
-        )
-        .forEach(
-            btn => {
-
-                btn.classList.remove(
-                    "active"
-                );
-
-            }
-        );
-
-
-    button.classList.add(
-        "active"
-    );
-
-
-    renderProducts();
-
-}
-
-
-/* =========================================================
-   AGGIUNGI AL CARRELLO
-========================================================= */
-
-function addToCart(
-    product,
-    quantity
-) {
-
-    const existing =
-        cart.find(
-            item =>
-                item.id ===
-                product.id
-        );
-
-
-    if (existing) {
-
-        existing.quantity +=
-            quantity;
-
-    } else {
-
-        cart.push({
-
-            ...product,
-
-            quantity: quantity
-
-        });
-
-    }
-
-
-    saveCart();
-
-    renderCart();
-
-}
-
-
-/* =========================================================
-   RIMUOVI DAL CARRELLO
-========================================================= */
-
-function removeFromCart(id) {
-
-    cart =
-        cart.filter(
-            item =>
-                item.id !== id
-        );
-
-
-    saveCart();
-
-    renderCart();
-
-}
-
-
-/* =========================================================
-   CAMBIA QUANTITÀ
-========================================================= */
-
-function changeCartQuantity(
-    id,
-    change
-) {
-
-    const item =
-        cart.find(
-            product =>
-                product.id === id
-        );
-
-
-    if (!item) {
-        return;
-    }
-
-
-    item.quantity +=
-        change;
-
-
-    if (
-        item.quantity <= 0
-    ) {
-
-        removeFromCart(id);
-
-        return;
-
-    }
-
-
-    saveCart();
-
-    renderCart();
-
-}
-
-
-/* =========================================================
-   RENDER CARRELLO
-========================================================= */
-
-function renderCart() {
-
-    cartItemsContainer.innerHTML =
-        "";
-
-
-    if (
-        cart.length === 0
-    ) {
-
-        emptyCart.style.display =
-            "flex";
-
-    } else {
-
-        emptyCart.style.display =
-            "none";
-
-    }
-
-
-    let total = 0;
-
-    let count = 0;
-
-
-    cart.forEach(item => {
-
-        total +=
-            item.price *
-            item.quantity;
-
-
-        count +=
-            item.quantity;
-
-
-        const cartItem =
-            document.createElement(
-                "div"
-            );
-
-        cartItem.className =
-            "cart-item";
-
-
-        const image =
-            document.createElement(
-                "img"
-            );
-
-        image.className =
-            "cart-item-image";
-
-        image.src =
-            item.imageUrl ||
-            item.filename;
-
-        image.alt =
-            "Prodotto";
-
-
-        const info =
-            document.createElement(
-                "div"
-            );
-
-        info.className =
-            "cart-item-info";
-
-
-        const price =
-            document.createElement(
-                "div"
-            );
-
-        price.className =
-            "cart-item-price";
-
-        price.textContent =
-            formatPrice(
-                item.price
-            );
-
-
-        const quantity =
-            document.createElement(
-                "div"
-            );
-
-        quantity.className =
-            "cart-item-quantity";
-
-        quantity.textContent =
-            "Quantità: " +
-            item.quantity;
-
-
-        const minus =
-            document.createElement(
-                "button"
-            );
-
-        minus.className =
-            "remove-item";
-
-        minus.textContent =
-            "− 1";
-
-        minus.onclick =
-            () =>
-                changeCartQuantity(
-                    item.id,
-                    -1
-                );
-
-
-        const plus =
-            document.createElement(
-                "button"
-            );
-
-        plus.className =
-            "remove-item";
-
-        plus.textContent =
-            "+ 1";
-
-        plus.onclick =
-            () =>
-                changeCartQuantity(
-                    item.id,
-                    1
-                );
-
-
-        const remove =
-            document.createElement(
-                "button"
-            );
-
-        remove.className =
-            "remove-item";
-
-        remove.textContent =
-            "Rimuovi";
-
-        remove.onclick =
-            () =>
-                removeFromCart(
-                    item.id
-                );
-
-
-        info.appendChild(
-            price
-        );
-
-        info.appendChild(
-            quantity
-        );
-
-        info.appendChild(
-            minus
-        );
-
-        info.appendChild(
-            plus
-        );
-
-        info.appendChild(
-            remove
-        );
-
-
-        cartItem.appendChild(
-            image
-        );
-
-        cartItem.appendChild(
-            info
-        );
-
-
-        cartItemsContainer.appendChild(
-            cartItem
-        );
-
-    });
-
-
-    cartTotal.textContent =
-        formatPrice(total);
-
-
-    cartCount.textContent =
-        count;
-
-}
-
-
-/* =========================================================
-   APRI CARRELLO
-========================================================= */
-
-function openCart() {
-
-    cartOverlay.classList.add(
-        "open"
-    );
-
-    document.body.style.overflow =
-        "hidden";
-
-}
-
-
-/* =========================================================
-   CHIUDI CARRELLO
-========================================================= */
-
-function closeCart() {
-
-    cartOverlay.classList.remove(
-        "open"
-    );
-
-    document.body.style.overflow =
-        "";
-
-}
-
-
-/* =========================================================
-   CHIUDI CLICCANDO FUORI
-========================================================= */
-
-function closeCartOutside(event) {
-
-    if (
-        event.target ===
-        cartOverlay
-    ) {
-
-        closeCart();
-
-    }
-
-}
-
-
-/* =========================================================
-   CHECKOUT WHATSAPP
-========================================================= */
-
-function checkoutWhatsApp() {
-
-    if (
-        cart.length === 0
-    ) {
-
-        alert(
-            "Il carrello è vuoto."
-        );
-
-        return;
-
-    }
-
-
-    let message =
-        "Ciao Mariomodagoldshop, ho aggiunto questi prodotti al carrello:\n\n";
-
-
-    cart.forEach(item => {
-
-        message +=
-            "• " +
-            item.category.toUpperCase() +
-            " " +
-            item.number +
-            " x " +
-            item.quantity +
-            " - " +
-            formatPrice(
-                item.price
-            ) +
-            "\n";
-
-    });
-
-
-    let total = 0;
-
-
-    cart.forEach(item => {
-
-        total +=
-            item.price *
-            item.quantity;
-
-    });
-
-
-    message +=
-        "\nTotale: " +
-        formatPrice(total);
-
-
-    const url =
-        "https://wa.me/" +
-        WHATSAPP_NUMBER +
-        "?text=" +
-        encodeURIComponent(
-            message
-        );
-
-
-    window.open(
-        url,
-        "_blank"
-    );
-
-}
-
-
-/* =========================================================
-   SALVA CARRELLO
-========================================================= */
-
-function saveCart() {
-
-    localStorage.setItem(
-        "mariomodagoldshop_cart",
-        JSON.stringify(cart)
-    );
-
-}
-
-
-/* =========================================================
-   CARICA CARRELLO
-========================================================= */
-
-function loadCart() {
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                "mariomodagoldshop_cart"
-            );
-
-
-        if (saved) {
-
-            cart =
-                JSON.parse(saved);
-
-        }
-
-    } catch (error) {
-
-        cart = [];
-
-    }
-
-}
-
-
-/* =========================================================
-   AVVIO
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        loadCart();
-
-        renderCart();
-
-        loadProducts();
-
-    }
-);
+$("#menuBtn").onclick=()=>{$("#drawer").classList.add("open");$("#overlay").classList.add("show")};
+$("#closeMenu").onclick=()=>{$("#drawer").classList.remove("open");$("#overlay").classList.remove("show")};
+$("#overlay").onclick=()=>$("#closeMenu").click();
+$("#searchBtn").onclick=()=>{$("#searchPanel").classList.add("open");$("#searchInput").focus()};
+$("#closeSearch").onclick=()=>$("#searchPanel").classList.remove("open");
+$("#applySearch").onclick=applySearch;
+$("#searchInput").addEventListener("keydown",e=>{if(e.key==="Enter")applySearch()});
+$("#sortSelect").onchange=renderCatalog;
+$("#cartBtn").onclick=()=>{$("#cart").classList.add("open");$("#cartOverlay").classList.add("show")};
+$("#closeCart").onclick=()=>{$("#cart").classList.remove("open");$("#cartOverlay").classList.remove("show")};
+$("#cartOverlay").onclick=()=>$("#closeCart").click();
+$("#checkout").onclick=checkout;
+$("#requestBtn").onclick=requestProduct;
+$("#year").textContent=new Date().getFullYear();
+
+loadProducts();
