@@ -109,7 +109,7 @@ function addToCart(p,q){
   const key=String(p.id||p.nome);
   const existing=cart.find(x=>String(x.id)===key);
   if(existing)existing.qty+=q;else cart.push({id:key,nome:p.nome,prezzo:productPrice(p),qty:q,foto:p.foto||"prodotti.jpeg"});
-  saveCart();openCart();
+  saveCart();$("#cart").classList.add("open");$("#cartOverlay").classList.add("show");
 }
 function saveCart(){localStorage.setItem("mmgs_cart",JSON.stringify(cart));updateCart()}
 function updateCart(){
