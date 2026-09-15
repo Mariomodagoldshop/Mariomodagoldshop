@@ -1,142 +1,766 @@
 <!doctype html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MARIOMODAGOLDSHOP — Shop online">
-  <title>MARIOMODAGOLDSHOP</title>
+
+  <meta
+    name="description"
+    content="MARIO_MODA_GOLD_SHOP — Shop online"
+  >
+
+  <title>MARIO_MODA_GOLD_SHOP</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="top-banner">SPEDIZIONE GARANTITA ENTRO 48 ORE</div>
+
+  <!-- BANNER SUPERIORE -->
+
+  <div class="top-banner">
+    SPEDIZIONE GARANTITA ENTRO 48 ORE
+  </div>
+
+
+  <!-- HEADER -->
 
   <header class="header">
-    <input class="menu-toggle" id="menuToggle" type="checkbox" aria-label="Apri menu">
-<label class="icon-btn hamburger" for="menuToggle" aria-label="Apri menu"><span></span><span></span><span></span></label>
-    <a class="brand-center" href="#home" aria-label="MARIOMODAGOLDSHOP">
-      <span class="site-title">MARIOMODAGOLDSHOP</span>
-      <img src="logo.jpeg" alt="Logo MARIOMODAGOLDSHOP">
+
+    <input
+      class="menu-toggle"
+      id="menuToggle"
+      type="checkbox"
+      aria-label="Apri menu"
+    >
+
+    <label
+      class="icon-btn hamburger"
+      for="menuToggle"
+      aria-label="Apri menu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+
+    <!-- NOME DEL NEGOZIO NELL'HEADER -->
+
+    <a
+      class="brand-center"
+      href="#home"
+      aria-label="MARIO_MODA_GOLD_SHOP"
+    >
+      <span class="site-title">
+        MARIO_MODA_GOLD_SHOP
+      </span>
     </a>
+
+
+    <!-- RICERCA E CARRELLO -->
+
     <div class="header-actions">
-      <button class="icon-btn search-btn" id="searchBtn" aria-label="Cerca">⌕</button>
-      <button class="cart-btn" id="cartBtn" aria-label="Carrello">🛒<b id="cartCount">0</b></button>
+
+      <button
+        class="icon-btn search-btn"
+        id="searchBtn"
+        aria-label="Cerca"
+      >
+        ⌕
+      </button>
+
+      <button
+        class="cart-btn"
+        id="cartBtn"
+        aria-label="Carrello"
+      >
+        🛒
+        <b id="cartCount">0</b>
+      </button>
+
     </div>
+
   </header>
 
-  <aside class="menu-overlay" id="drawer">
-    <div class="menu-top"><span>MENU</span><label class="menu-close" for="menuToggle" aria-label="Chiudi menu">×</label></div>
+
+  <!-- MENU -->
+
+  <aside
+    class="menu-overlay"
+    id="drawer"
+  >
+
+    <div class="menu-top">
+
+      <span>MENU</span>
+
+      <label
+        class="menu-close"
+        for="menuToggle"
+        aria-label="Chiudi menu"
+      >
+        ×
+      </label>
+
+    </div>
+
     <nav>
+
       <a href="#home">Home</a>
+
       <a href="#catalogo">Catalogo</a>
+
       <a href="#contatti">Contatti</a>
+
       <a href="#richiedi">Richiedi</a>
+
       <a href="#recensioni">Recensioni</a>
+
     </nav>
+
   </aside>
-  <label class="menu-backdrop" for="menuToggle"></label>
+
+  <label
+    class="menu-backdrop"
+    for="menuToggle"
+  ></label>
+
+
+  <!-- CONTENUTO PRINCIPALE -->
+
   <main id="home">
+
+
+    <!-- HOME -->
+
     <section class="hero">
+
       <div class="hero-copy">
-        <p class="eyebrow">SHOP ONLINE • ORIGINAL QUALITY</p>
-        <h1>MARIOMODAGOLDSHOP</h1>
-        <p>Scopri i nostri articoli, le nuove uscite e le offerte del momento.</p>
-        <a class="primary-btn" href="#catalogo">SCOPRI IL CATALOGO</a>
+
+        <p class="eyebrow">
+          SHOP ONLINE • ORIGINAL QUALITY
+        </p>
+
+
+        <!-- LOGO GRANDE DELLA HOME -->
+
+        <h1 class="hero-logo">
+
+          <img
+            src="logo.jpg"
+            alt="MARIO_MODA_GOLD_SHOP"
+          >
+
+        </h1>
+
+
+        <p>
+          Scopri i nostri articoli,
+          le nuove uscite e le offerte
+          del momento.
+        </p>
+
+        <a
+          class="primary-btn"
+          href="#catalogo"
+        >
+          SCOPRI IL CATALOGO
+        </a>
+
       </div>
-      <div class="video-showcase" id="videos"></div>
+
+
+      <div
+        class="video-showcase"
+        id="videos"
+      ></div>
+
     </section>
+
+
+    <!-- BANNER PRODOTTI -->
 
     <section class="products-banner section">
-      <div class="section-heading"><p class="eyebrow">MARIOMODAGOLDSHOP</p><h2>Vedi I Nostri Prodotti</h2></div>
-      <img src="prodotti.jpeg" alt="Vedi i nostri prodotti">
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          MARIO_MODA_GOLD_SHOP
+        </p>
+
+        <h2>
+          Vedi I Nostri Prodotti
+        </h2>
+
+      </div>
+
+      <img
+        src="prodotti.jpeg"
+        alt="Vedi i nostri prodotti"
+      >
+
     </section>
 
-    <section class="section" id="offerte">
-      <div class="section-heading"><p class="eyebrow">SELEZIONE</p><h2>Le offerte del momento🔥</h2></div>
-      <div class="product-grid" id="offersGrid"></div>
+
+    <!-- OFFERTE -->
+
+    <section
+      class="section"
+      id="offerte"
+    >
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          SELEZIONE
+        </p>
+
+        <h2>
+          Le offerte del momento🔥
+        </h2>
+
+      </div>
+
+      <div
+        class="product-grid"
+        id="offersGrid"
+      ></div>
+
     </section>
 
-    <section class="section" id="nuovi">
-      <div class="section-heading"><p class="eyebrow">APPENA ARRIVATI</p><h2>Nuovi arrivi💣</h2></div>
-      <div class="product-grid" id="newGrid"></div>
+
+    <!-- NUOVI ARRIVI -->
+
+    <section
+      class="section"
+      id="nuovi"
+    >
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          APPENA ARRIVATI
+        </p>
+
+        <h2>
+          Nuovi arrivi💣
+        </h2>
+
+      </div>
+
+      <div
+        class="product-grid"
+        id="newGrid"
+      ></div>
+
     </section>
 
-    <section class="section catalog-section" id="catalogo">
-      <div class="section-heading"><p class="eyebrow">SHOP</p><h2>Catalogo</h2></div>
-      <div class="categories" id="categories"></div>
+
+    <!-- CATALOGO -->
+
+    <section
+      class="section catalog-section"
+      id="catalogo"
+    >
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          SHOP
+        </p>
+
+        <h2>
+          Catalogo
+        </h2>
+
+      </div>
+
+      <div
+        class="categories"
+        id="categories"
+      ></div>
+
       <div class="catalog-tools">
+
         <span id="resultCount"></span>
-        <select id="sortSelect"><option value="newest">Più recenti</option><option value="asc">Prezzo crescente</option><option value="desc">Prezzo decrescente</option></select>
+
+        <select id="sortSelect">
+
+          <option value="newest">
+            Più recenti
+          </option>
+
+          <option value="asc">
+            Prezzo crescente
+          </option>
+
+          <option value="desc">
+            Prezzo decrescente
+          </option>
+
+        </select>
+
       </div>
-      <div class="product-grid" id="catalogGrid"></div>
+
+      <div
+        class="product-grid"
+        id="catalogGrid"
+      ></div>
+
     </section>
 
-    <section class="section request-section" id="richiedi">
+
+    <!-- RICHIEDI -->
+
+    <section
+      class="section request-section"
+      id="richiedi"
+    >
+
       <div class="request-box">
-        <p class="eyebrow">NON TROVI QUELLO CHE CERCHI?</p>
-        <h2>Richiedi un prodotto</h2>
-        <p>Scrivici cosa stai cercando e invia la richiesta direttamente su WhatsApp.</p>
-        <input id="requestProduct" type="text" placeholder="Es. Nike Air Max 42 nere">
-        <button class="primary-btn" id="requestBtn">RICHIEDI SU WHATSAPP</button>
+
+        <p class="eyebrow">
+          NON TROVI QUELLO CHE CERCHI?
+        </p>
+
+        <h2>
+          Richiedi un prodotto
+        </h2>
+
+        <p>
+          Scrivici cosa stai cercando
+          e invia la richiesta direttamente
+          su WhatsApp.
+        </p>
+
+        <input
+          id="requestProduct"
+          type="text"
+          placeholder="Es. Nike Air Max 42 nere"
+        >
+
+        <button
+          class="primary-btn"
+          id="requestBtn"
+        >
+          RICHIEDI SU WHATSAPP
+        </button>
+
       </div>
+
     </section>
 
-    <section class="section" id="recensioni">
-      <div class="section-heading"><p class="eyebrow">FEEDBACK</p><h2>Recensioni</h2></div>
-      <div class="reviews-grid" id="reviewsGrid"></div>
+
+    <!-- RECENSIONI -->
+
+    <section
+      class="section"
+      id="recensioni"
+    >
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          FEEDBACK
+        </p>
+
+        <h2>
+          Recensioni
+        </h2>
+
+      </div>
+
+      <div
+        class="reviews-grid"
+        id="reviewsGrid"
+      ></div>
+
     </section>
 
-    <section class="section" id="contatti">
-      <div class="section-heading"><p class="eyebrow">PARLIAMO</p><h2>Contatti</h2></div>
+
+    <!-- CONTATTI -->
+
+    <section
+      class="section"
+      id="contatti"
+    >
+
+      <div class="section-heading">
+
+        <p class="eyebrow">
+          PARLIAMO
+        </p>
+
+        <h2>
+          Contatti
+        </h2>
+
+      </div>
+
       <div class="contact-grid">
-        <a href="https://wa.me/393510901180" target="_blank" rel="noopener">WhatsApp<br><strong>+39 351 090 1180</strong></a>
-        <a href="https://www.instagram.com/mario_moda_gold/" target="_blank" rel="noopener">Instagram<br><strong>@mario_moda_gold</strong></a>
-        <a href="https://www.tiktok.com/@mario_moda_goldshop" target="_blank" rel="noopener">TikTok<br><strong>@mario_moda_goldshop</strong></a>
+
+        <a
+          href="https://wa.me/393510901180"
+          target="_blank"
+          rel="noopener"
+        >
+          WhatsApp<br>
+          <strong>+39 351 090 1180</strong>
+        </a>
+
+        <a
+          href="https://www.instagram.com/mario_moda_gold/"
+          target="_blank"
+          rel="noopener"
+        >
+          Instagram<br>
+          <strong>@mario_moda_gold</strong>
+        </a>
+
+        <a
+          href="https://www.tiktok.com/@mario_moda_goldshop"
+          target="_blank"
+          rel="noopener"
+        >
+          TikTok<br>
+          <strong>@mario_moda_goldshop</strong>
+        </a>
+
       </div>
+
     </section>
+
+
+    <!-- INFORMAZIONI -->
 
     <section class="section info-grid">
-      <div><strong>SHOP ONLINE • ORIGINAL QUALITY</strong><span>Articoli selezionati</span></div>
-      <div><strong>PAGAMENTO ALLA CONSEGNA</strong><span>Comodo e semplice</span></div>
-      <div><strong>CONSEGNA 24H NAPOLI E PROVINCIA • 48H TUTTA ITALIA</strong><span>Spedizione rapida</span></div>
+
+      <div>
+
+        <strong>
+          SHOP ONLINE • ORIGINAL QUALITY
+        </strong>
+
+        <span>
+          Articoli selezionati
+        </span>
+
+      </div>
+
+      <div>
+
+        <strong>
+          PAGAMENTO ALLA CONSEGNA
+        </strong>
+
+        <span>
+          Comodo e semplice
+        </span>
+
+      </div>
+
+      <div>
+
+        <strong>
+          CONSEGNA 24H NAPOLI E PROVINCIA • 48H TUTTA ITALIA
+        </strong>
+
+        <span>
+          Spedizione rapida
+        </span>
+
+      </div>
+
     </section>
+
   </main>
 
+
+  <!-- FOOTER -->
+
   <footer>
-    <div class="footer-brand">MARIOMODAGOLDSHOP</div>
-    <p>SHOP ONLINE • ORIGINAL QUALITY</p>
-    <div class="footer-social"><a href="https://www.instagram.com/mario_moda_gold/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@mario_moda_goldshop" target="_blank" rel="noopener">TikTok</a><a href="https://wa.me/393510901180" target="_blank" rel="noopener">WhatsApp</a></div>
-    <small>© <span id="year"></span> MARIOMODAGOLDSHOP</small>
+
+    <div class="footer-brand">
+      MARIO_MODA_GOLD_SHOP
+    </div>
+
+    <p>
+      SHOP ONLINE • ORIGINAL QUALITY
+    </p>
+
+    <div class="footer-social">
+
+      <a
+        href="https://www.instagram.com/mario_moda_gold/"
+        target="_blank"
+        rel="noopener"
+      >
+        Instagram
+      </a>
+
+      <a
+        href="https://www.tiktok.com/@mario_moda_goldshop"
+        target="_blank"
+        rel="noopener"
+      >
+        TikTok
+      </a>
+
+      <a
+        href="https://wa.me/393510901180"
+        target="_blank"
+        rel="noopener"
+      >
+        WhatsApp
+      </a>
+
+    </div>
+
+    <small>
+      ©
+      <span id="year"></span>
+      MARIO_MODA_GOLD_SHOP
+    </small>
+
   </footer>
 
-  <section class="search-panel" id="searchPanel">
-    <div class="search-head"><h2>Cerca</h2><button id="closeSearch">×</button></div>
-    <input id="searchInput" type="search" placeholder="Cerca per nome prodotto...">
-    <div class="filter-grid">
-      <select id="filterCategory"><option value="">Categoria</option></select>
-      <select id="filterSize"><option value="">Taglia</option></select>
-      <select id="filterColor"><option value="">Colore</option></select>
-      <select id="filterAvailability"><option value="">Disponibilità</option><option value="SI">Disponibile</option><option value="NO">Esaurito</option></select>
-      <input id="minPrice" type="number" min="0" placeholder="Prezzo minimo">
-      <input id="maxPrice" type="number" min="0" placeholder="Prezzo massimo">
+
+  <!-- RICERCA -->
+
+  <section
+    class="search-panel"
+    id="searchPanel"
+  >
+
+    <div class="search-head">
+
+      <h2>
+        Cerca
+      </h2>
+
+      <button id="closeSearch">
+        ×
+      </button>
+
     </div>
-    <label class="check"><input id="promoOnly" type="checkbox"> Solo promo</label>
-    <label class="check"><input id="newOnly" type="checkbox"> Solo nuovi arrivi</label>
-    <button class="primary-btn" id="applySearch">CERCA</button>
+
+    <input
+      id="searchInput"
+      type="search"
+      placeholder="Cerca per nome prodotto..."
+    >
+
+    <div class="filter-grid">
+
+      <select id="filterCategory">
+
+        <option value="">
+          Categoria
+        </option>
+
+      </select>
+
+      <select id="filterSize">
+
+        <option value="">
+          Taglia
+        </option>
+
+      </select>
+
+      <select id="filterColor">
+
+        <option value="">
+          Colore
+        </option>
+
+      </select>
+
+      <select id="filterAvailability">
+
+        <option value="">
+          Disponibilità
+        </option>
+
+        <option value="SI">
+          Disponibile
+        </option>
+
+        <option value="NO">
+          Esaurito
+        </option>
+
+      </select>
+
+      <input
+        id="minPrice"
+        type="number"
+        min="0"
+        placeholder="Prezzo minimo"
+      >
+
+      <input
+        id="maxPrice"
+        type="number"
+        min="0"
+        placeholder="Prezzo massimo"
+      >
+
+    </div>
+
+    <label class="check">
+
+      <input
+        id="promoOnly"
+        type="checkbox"
+      >
+
+      Solo promo
+
+    </label>
+
+    <label class="check">
+
+      <input
+        id="newOnly"
+        type="checkbox"
+      >
+
+      Solo nuovi arrivi
+
+    </label>
+
+    <button
+      class="primary-btn"
+      id="applySearch"
+    >
+      CERCA
+    </button>
+
   </section>
 
-  <div class="cart-overlay" id="cartOverlay"></div>
-  <aside class="cart" id="cart">
-    <div class="cart-head"><h2>Carrello</h2><button id="closeCart">×</button></div>
+
+  <!-- CARRELLO -->
+
+  <div
+    class="cart-overlay"
+    id="cartOverlay"
+  ></div>
+
+  <aside
+    class="cart"
+    id="cart"
+  >
+
+    <div class="cart-head">
+
+      <h2>
+        Carrello
+      </h2>
+
+      <button id="closeCart">
+        ×
+      </button>
+
+    </div>
+
     <div id="cartItems"></div>
-    <div class="cart-bottom"><div><span>Totale</span><strong id="cartTotal">€0,00</strong></div><button class="primary-btn" id="checkout">ORDINA SU WHATSAPP</button></div>
+
+    <div class="cart-bottom">
+
+      <div>
+
+        <span>
+          Totale
+        </span>
+
+        <strong id="cartTotal">
+          €0,00
+        </strong>
+
+      </div>
+
+      <button
+        class="primary-btn"
+        id="checkout"
+      >
+        ORDINA SU WHATSAPP
+      </button>
+
+    </div>
+
   </aside>
 
+
+  <!-- TEMPLATE PRODOTTI -->
+
   <template id="productTemplate">
+
     <article class="product-card">
-      <div class="product-image-wrap"><img class="product-image" loading="lazy"><span class="badge promo-badge">PROMO</span><span class="sold-badge">ESAURITO</span></div>
-      <div class="product-meta"><h3 class="product-name"></h3><p class="product-details"></p><div class="price-line"><strong class="price"></strong><del class="old-price"></del></div><div class="qty-row"><button class="minus">−</button><span class="qty">1</span><button class="plus">+</button><button class="add">AGGIUNGI</button></div></div>
+
+      <div class="product-image-wrap">
+
+        <img
+          class="product-image"
+          loading="lazy"
+        >
+
+        <span class="badge promo-badge">
+          PROMO
+        </span>
+
+        <span class="sold-badge">
+          ESAURITO
+        </span>
+
+      </div>
+
+      <div class="product-meta">
+
+        <h3 class="product-name"></h3>
+
+        <p class="product-details"></p>
+
+        <div class="price-line">
+
+          <strong class="price"></strong>
+
+          <del class="old-price"></del>
+
+        </div>
+
+        <div class="qty-row">
+
+          <button class="minus">
+            −
+          </button>
+
+          <span class="qty">
+            1
+          </span>
+
+          <button class="plus">
+            +
+          </button>
+
+          <button class="add">
+            AGGIUNGI
+          </button>
+
+        </div>
+
+      </div>
+
     </article>
+
   </template>
+
+
+  <!-- SCRIPT -->
+
   <script src="script.js"></script>
+
 </body>
 </html>
